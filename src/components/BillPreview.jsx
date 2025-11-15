@@ -178,6 +178,7 @@ const BillPreview = ({ bill, resetForm }) => {
       </head>
       <body>
         <div class="header">
+          
           <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" class="logo" />
           
           <h1 class="hotel-name">${APP_NAME}</h1>
