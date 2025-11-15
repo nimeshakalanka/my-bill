@@ -150,12 +150,12 @@ const BillPreview = ({ bill, resetForm }) => {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            font-size: 16px;
+            font-size: 14px;
           }
           .total-label { font-weight: 600; color: #475569; }
           .total-value { color: #1e293b; font-weight: 600; }
           .grand-total {
-            font-size: 24px;
+            font-size: 20px;
             color: #1e40af;
             border-top: 3px solid #2563eb;
             padding-top: 15px;
@@ -191,8 +191,6 @@ const BillPreview = ({ bill, resetForm }) => {
             </div>
 
           </div>
-          
-          <div class="invoice-label">TAX INVOICE</div>
         </div>
 
         <div class="info-grid">
