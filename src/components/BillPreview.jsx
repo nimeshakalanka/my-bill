@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download } from 'lucide-react';
-import { APP_NAME } from '../constants.js';
+import { APP_NAME } from '/src/constants.js';
 
 const BillPreview = ({ bill, resetForm }) => {
 
@@ -20,33 +20,69 @@ const BillPreview = ({ bill, resetForm }) => {
             margin: 0 auto;
             color: #333;
           }
-          /* --- LOGO STYLE --- */
-          .logo {
-            width: 96px;
-            height: 96px;
-            margin: 0 auto 16px auto;
-            object-fit: contain;
-            display: block;
-          }
+          
+          /* --- HEADER LAYOUT (Updated for Side-by-Side) --- */
           .header {
-            text-align: center;
+            /* Reduced padding from 30px to 15px to reduce height */
+            padding: 15px 20px; 
+            margin-bottom: 20px;
             border-bottom: 4px solid #2563eb;
-            padding: 30px;
-            margin-bottom: 30px;
             background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
             color: white;
             border-radius: 10px;
           }
+          
+          .header-content {
+            display: flex;
+            align-items: center;     /* Vertically center logo and text */
+            justify-content: center; /* Horizontally center the group */
+            gap: 20px;               /* Space between logo and text */
+            margin-bottom: 10px;
+          }
+
+          .logo {
+            width: 70px;  /* Reduced size */
+            height: 70px;
+            object-fit: contain;
+            /* No margin needed here anymore */
+          }
+
+          .header-text {
+            text-align: left; /* Align text to the left of the block */
+          }
+
           .hotel-name {
-            font-size: 36px;
+            font-size: 28px; /* Slightly smaller to fit better */
             font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
           }
-          .invoice-label {
-            font-size: 24px;
-            margin-top: 10px;
-            color: #fbbf24;
+
+          .tagline {
+            margin: 4px 0;
+            font-size: 14px;
+            opacity: 0.9;
           }
+
+          .address {
+            font-size: 12px;
+            opacity: 0.8;
+            margin: 0;
+          }
+
+          .invoice-label {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            color: #fbbf24;
+            font-weight: bold;
+            letter-spacing: 1px;
+          }
+
+          /* --- REST OF THE CSS --- */
           .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -133,57 +169,29 @@ const BillPreview = ({ bill, resetForm }) => {
             border-top: 2px solid #e2e8f0;
           }
 
-          /* --- PRINT OPTIMIZATION (ONE PAGE FIX) --- */
           @media print { 
-            body { 
-              padding: 8px; /* Reduced padding */
-              margin: 0;
-            }
-            /* Prevent elements from being split across pages */
-            .header, .info-grid, .package-box, .table, .total-section, .footer {
-              page-break-inside: avoid;
-            }
-            /* Reduce spacing to fit content */
-            .header {
-              padding: 15px;
-              margin-bottom: 15px;
-            }
-            .info-grid {
-              gap: 15px;
-              margin-bottom: 15px;
-            }
-            .package-box {
-              margin-bottom: 15px;
-              padding: 15px;
-            }
-            .table {
-              margin: 15px 0;
-            }
-            .total-section {
-              margin-top: 15px;
-              padding: 15px;
-            }
-            .footer {
-              margin-top: 20px;
-              padding-top: 10px;
-            }
-            /* Ensure logo prints correctly */
-            .logo {
-              width: 50px;
-              height: 50px;
-              margin-bottom: 10px;
-            }
+            body { padding: 10px; margin: 0; }
+            .header, .info-grid, .package-box, .table, .total-section, .footer { page-break-inside: avoid; }
+            .header { padding: 10px; margin-bottom: 10px; }
+            .logo { width: 60px; height: 60px; } /* Smaller logo for print */
+            .hotel-name { font-size: 24px; }
           }
         </style>
       </head>
       <body>
         <div class="header">
+          <div class="header-content">
+            
+            <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" class="logo" />
+            
+            <div class="header-text">
+              <h1 class="hotel-name">${APP_NAME}</h1>
+              <p class="tagline">Your Comfort is Our Priority</p>
+              <p class="address">123 Beach Road, Negombo, Sri Lanka | Tel: +94 31 123 4567</p>
+            </div>
+
+          </div>
           
-          <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" class="logo" />
-          
-          <h1 class="hotel-name">${APP_NAME}</h1>
-          <p style="margin: 10px 0;">Your Comfort is Our Priority</p>
-          <p style="font-size: 13px;">123 Beach Road, Negombo, Sri Lanka | Tel: +94 31 123 4567</p>
           <div class="invoice-label">TAX INVOICE</div>
         </div>
 
@@ -340,9 +348,10 @@ const BillPreview = ({ bill, resetForm }) => {
     <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
       <div className="text-center mb-6 pb-6 border-b-2 border-blue-600">
         
-        {/* LOGO ON SCREEN */}
+        {/* ON SCREEN PREVIEW: Keep it centered here or side-by-side? 
+            Keeping centered for mobile responsiveness, but using the Cloudinary logo */}
         <img 
-          src="/logo.png" 
+          src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" 
           alt="Logo" 
           className="w-24 h-24 mx-auto mb-4 object-contain" 
         />
