@@ -136,7 +136,7 @@ const BillPreview = ({ bill, resetForm }) => {
           /* --- PRINT OPTIMIZATION (ONE PAGE FIX) --- */
           @media print { 
             body { 
-              padding: 10px; /* Reduced padding */
+              padding: 8px; /* Reduced padding */
               margin: 0;
             }
             /* Prevent elements from being split across pages */
@@ -169,8 +169,8 @@ const BillPreview = ({ bill, resetForm }) => {
             }
             /* Ensure logo prints correctly */
             .logo {
-              width: 80px;
-              height: 80px;
+              width: 50px;
+              height: 50px;
               margin-bottom: 10px;
             }
           }
