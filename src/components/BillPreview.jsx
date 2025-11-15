@@ -321,15 +321,15 @@ const BillPreview = ({ bill, resetForm }) => {
         </div>
 
         ${bill.specialRequests ? `
-        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
+        <div style="margin-top: 15px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
           <strong style="color: #92400e;">Special Requests:</strong><br>
           <span style="color: #78350f;">${bill.specialRequests}</span>
         </div>` : ''}
 
         <div class="footer">
           <p style="font-size: 18px; color: #1e40af; font-weight: bold;">Thank You for Choosing ${APP_NAME}!</p>
-          <p style="color: #64748b; margin-top: 10px;">We hope you enjoyed your experience with us.</p>
-          <p style="margin-top: 20px; color: #64748b;">For inquiries: info@dreamstayhotel.lk | www.dreamstayhotel.lk</p>
+          <p style="color: #64748b; margin-top: 5px;">We hope you enjoyed your experience with us.</p>
+          <p style="margin-top: 10px; color: #64748b;">For inquiries: info@dreamstayhotel.lk | www.dreamstayhotel.lk</p>
         </div>
       </body>
       </html>

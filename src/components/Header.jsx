@@ -7,7 +7,7 @@ const Header = ({ showHistory, setShowHistory, resetForm, handleLogout }) => {
     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-6 md:p-8 mb-6 text-white">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <Building2 className="w-12 h-12 md:w-16 md:h-16" />
+          <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" className="w-20 h-20" />
           <div>
             <h1 className="text-3xl md:text-4xl font-bold">{APP_NAME}</h1>
             <p className="text-blue-100 mt-1">Professional Billing System</p>
