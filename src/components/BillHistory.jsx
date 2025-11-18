@@ -30,8 +30,8 @@ const BillHistory = ({ billHistory, searchTerm, setSearchTerm, viewBill, deleteB
             </tr>
           </thead>
           <tbody className="divide-y">
-            {filteredHistory.map((b) => (
-              <tr key={b.billNumber} className="hover:bg-gray-50">
+            {filteredHistory.length > 0 ? filteredHistory.map((b) => (
+              <tr key={b.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-mono text-sm">{b.billNumber}</td>
                 <td className="px-4 py-3 text-sm">{new Date(b.billDate).toLocaleDateString()}</td>
                 <td className="px-4 py-3">{b.guestName}</td>
@@ -40,14 +40,20 @@ const BillHistory = ({ billHistory, searchTerm, setSearchTerm, viewBill, deleteB
                 <td className="px-4 py-3">
                   <div className="flex gap-2 justify-center">
                     <button onClick={() => viewBill(b)} className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">View</button>
-                    <button onClick={() => deleteBill(b.billNumber)} disabled={isProcessing} className="bg-red-500 text-white p-1 rounded hover:bg-red-600 disabled:opacity-50"><Trash2 className="w-4 h-4" /></button>
+                    {/* Use b.id (Database ID) for deletion */}
+                    <button onClick={() => deleteBill(b.id)} disabled={isProcessing} className="bg-red-500 text-white p-1 rounded hover:bg-red-600 disabled:opacity-50"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan="6" className="text-center py-12 text-gray-500">
+                  No bills found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
-        {filteredHistory.length === 0 && <div className="text-center py-12 text-gray-500">No bills found</div>}
       </div>
     </div>
   );
