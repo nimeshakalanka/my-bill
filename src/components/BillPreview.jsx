@@ -163,9 +163,9 @@ const BillPreview = ({ bill, resetForm }) => {
             font-weight: bold;
           }
           .footer {
-            margin-top: 50px;
+            margin-top: 15px;
             text-align: center;
-            padding-top: 20px;
+            padding-top: 10px;
             border-top: 2px solid #e2e8f0;
           }
 
@@ -329,7 +329,6 @@ const BillPreview = ({ bill, resetForm }) => {
         <div class="footer">
           <p style="font-size: 18px; color: #1e40af; font-weight: bold;">Thank You for Choosing ${APP_NAME}!</p>
           <p style="color: #64748b; margin-top: 5px;">We hope you enjoyed your experience with us.</p>
-          <p style="margin-top: 10px; color: #64748b;">For inquiries: info@dreamstayhotel.lk | www.dreamstayhotel.lk</p>
         </div>
       </body>
       </html>
