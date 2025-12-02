@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-
-// --- MODIFICATION: Using absolute path for constants ---
 import { functionPackages, serviceChargeRate, taxRate } from '/src/constants.js';
+import { billService } from '../services/billService';
 
-// --- MODIFICATION: Removed .jsx extensions for component imports ---
 import Header from './Header';
 import BillHistory from './BillHistory';
 import BillingForm from './BillingForm';
 import BillPreview from './BillPreview';
-
-// The key we will use to save our bills array in the browser's localStorage
-const LOCAL_STORAGE_KEY = 'hotel_bills_history';
 
 const BillingDashboard = ({ handleLogout }) => {
   const [billType, setBillType] = useState('room');
@@ -27,30 +22,25 @@ const BillingDashboard = ({ handleLogout }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showHistory, setShowHistory] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(true); // Still useful for loading
+  const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // --- LOAD BILLS from localStorage ---
+  // --- LOAD BILLS from Netlify Blobs ---
   useEffect(() => {
-    setIsLoading(true);
-    try {
-      const savedBills = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (savedBills) {
-        const parsedBills = JSON.parse(savedBills);
-        // Sort by date descending
-        parsedBills.sort((a, b) => new Date(b.billDate) - new Date(a.billDate));
-        setBillHistory(parsedBills);
+    const loadBills = async () => {
+      setIsLoading(true);
+      try {
+        const bills = await billService.fetchBills();
+        bills.sort((a, b) => new Date(b.billDate) - new Date(a.billDate));
+        setBillHistory(bills);
+      } catch (error) {
+        console.error("Error loading bills:", error);
       }
-    } catch (e) {
-      console.error("Error loading bills from localStorage:", e);
-      // If parsing fails, clear the corrupted data
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    }
-    // Set loading to false after a short delay
-    setTimeout(() => setIsLoading(false), 300); 
-  }, []); // Runs once on component mount
+      setTimeout(() => setIsLoading(false), 300);
+    };
+    loadBills();
+  }, []);
 
-  // --- FORM VALIDATION (Unchanged) ---
   const validateForm = () => {
     const newErrors = {};
     if (!formData.guestName.trim()) newErrors.guestName = 'Guest name is required';
@@ -71,8 +61,8 @@ const BillingDashboard = ({ handleLogout }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // --- CALCULATE & SAVE BILL (Updated for localStorage) ---
-  const calculateBill = () => {
+  // --- CALCULATE & SAVE BILL (Updated for Netlify Blobs) ---
+  const calculateBill = async () => {
     if (!validateForm()) return;
     setIsProcessing(true);
 
@@ -100,37 +90,34 @@ const BillingDashboard = ({ handleLogout }) => {
     const total = subtotal + serviceCharge + tax;
     const newBill = { billType, ...formData, details, subtotal, serviceCharge, tax, total, billNumber, billDate };
     
-    // --- Save to localStorage ---
     try {
       const updatedHistory = [newBill, ...billHistory];
+      await billService.saveBills(updatedHistory);
       setBillHistory(updatedHistory);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedHistory));
-      setBill(newBill); // Show preview
-    } catch (e) { 
-      console.error("Error saving to localStorage: ", e); 
-      // Handle potential storage quota errors
+      setBill(newBill);
+    } catch (error) {
+      console.error("Error saving bill:", error);
+      alert("Failed to save bill. Please try again.");
     }
     setIsProcessing(false);
   };
 
-  // --- DELETE BILL (Updated for localStorage) ---
-  const deleteBill = (billNum) => {
-    // We use the 'billNumber' to find and delete
+  // --- DELETE BILL (Updated for Netlify Blobs) ---
+  const deleteBill = async (billNum) => {
     if (window.confirm && !window.confirm("Are you sure you want to delete this bill?")) {
-        return;
+      return;
     }
     setIsProcessing(true);
     try {
-      const updatedHistory = billHistory.filter(b => b.billNumber !== billNum);
-      setBillHistory(updatedHistory);
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedHistory));
-    } catch (e) { 
-      console.error("Error deleting from localStorage: ", e); 
+      const result = await billService.deleteBill(billNum);
+      setBillHistory(result.bills);
+    } catch (error) {
+      console.error("Error deleting bill:", error);
+      alert("Failed to delete bill. Please try again.");
     }
     setIsProcessing(false);
   };
 
-  // --- (Unchanged functions) ---
   const viewBill = (savedBill) => { setBill(savedBill); setShowHistory(false); };
   
   const resetForm = () => {
