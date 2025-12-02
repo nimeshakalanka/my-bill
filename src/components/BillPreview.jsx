@@ -87,7 +87,7 @@ const BillPreview = ({ bill, resetForm }) => {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
           }
           .info-section {
             background: #f8fafc;
@@ -98,7 +98,7 @@ const BillPreview = ({ bill, resetForm }) => {
           .info-title {
             font-weight: bold;
             color: #1e40af;
-            font-size: 14px;
+            font-size: 12px;
             margin-bottom: 15px;
             text-transform: uppercase;
           }
@@ -113,13 +113,13 @@ const BillPreview = ({ bill, resetForm }) => {
           .info-value { color: #1e293b; }
           .package-box {
             background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            padding: 20px;
+            padding: 10px;
             border-radius: 8px;
             margin-bottom: 20px;
             border: 2px solid #3b82f6;
           }
           .package-name {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: bold;
             color: #1e40af;
             margin-bottom: 10px;
@@ -127,23 +127,23 @@ const BillPreview = ({ bill, resetForm }) => {
           .table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 10px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
           }
           .table th {
             background: #1e40af;
             color: white;
-            padding: 15px;
+            padding: 10px;
             text-align: left;
           }
           .table td {
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-bottom: 1px solid #e2e8f0;
           }
           .total-section {
-            margin-top: 30px;
+            margin-top: 20px;
             background: #f8fafc;
-            padding: 20px;
+            padding: 10px;
             border-radius: 8px;
           }
           .total-row {
@@ -170,11 +170,11 @@ const BillPreview = ({ bill, resetForm }) => {
           }
 
           @media print { 
-            body { padding: 10px; margin: 0; }
+            body { padding: 5px; margin: 0; }
             .header, .info-grid, .package-box, .table, .total-section, .footer { page-break-inside: avoid; }
-            .header { padding: 10px; margin-bottom: 10px; }
-            .logo { width: 60px; height: 60px; } /* Smaller logo for print */
-            .hotel-name { font-size: 24px; }
+            .header { padding: 5px; margin-bottom: 5px; }
+            .logo { width: 50px; height: 50px; } /* Smaller logo for print */
+            .hotel-name { font-size: 20px; }
           }
         </style>
       </head>
@@ -187,7 +187,7 @@ const BillPreview = ({ bill, resetForm }) => {
             <div class="header-text">
               <h1 class="hotel-name">${APP_NAME}</h1>
               <p class="tagline">Your Comfort is Our Priority</p>
-              <p class="address">123 Beach Road, Negombo, Sri Lanka | Tel: +94 31 123 4567</p>
+              <p class="address">173A, Theresiya waththa, Ananda Maithri Road, Balangoda. | Tel: +94 74 337 7071</p>
             </div>
 
           </div>
