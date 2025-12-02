@@ -21,7 +21,7 @@ const Login = ({ onLoginSuccess }) => {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl border border-gray-200">
         <div className="flex items-center justify-center gap-3 mb-6">
-          <Building2 className="w-12 h-12 text-blue-600" />
+          <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" className="w-12 h-12" />
           <div>
             <h1 className="text-3xl font-bold text-gray-800">{APP_NAME}</h1>
             <p className="text-gray-500">Billing System Login</p>
@@ -36,11 +36,11 @@ const Login = ({ onLoginSuccess }) => {
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin" />
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Username" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Summit2025" />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Password" />
           </div>
           <button type="submit" className="w-full py-3 px-6 rounded-lg font-semibold text-white transition shadow-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 flex items-center justify-center">
             Login
