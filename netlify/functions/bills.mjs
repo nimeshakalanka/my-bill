@@ -1,9 +1,5 @@
 import { getStore } from '@netlify/blobs';
 
-export const config = {
-  path: '/bills'
-};
-
 export default async (req, context) => {
   const store = getStore({
     name: 'bills',
