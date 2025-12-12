@@ -337,12 +337,8 @@ const BillPreview = ({ bill, resetForm }) => {
             <span class="total-value">LKR ${bill.subtotal.toLocaleString()}</span>
           </div>
           <div class="total-row">
-            <span class="total-label">Service Charge (10%):</span>
+            <span class="total-label">Service Charge (${bill.billType === 'room' ? '15%' : '10%'}):</span>
             <span class="total-value">LKR ${bill.serviceCharge.toLocaleString()}</span>
-          </div>
-          <div class="total-row">
-            <span class="total-label">Tax (5%):</span>
-            <span class="total-value">LKR ${bill.tax.toLocaleString()}</span>
           </div>
           ${bill.additionalChargesTotal > 0 ? `
           <div class="total-row">
@@ -512,13 +508,9 @@ const BillPreview = ({ bill, resetForm }) => {
           <span className="font-medium">Subtotal:</span>
           <span className="font-semibold">LKR {bill.subtotal.toLocaleString()}</span>
         </div>
-        <div className="flex justify-between py-2">
-          <span className="font-medium">Service Charge (10%):</span>
-          <span className="font-semibold">LKR {bill.serviceCharge.toLocaleString()}</span>
-        </div>
         <div className="flex justify-between py-2 border-b">
-          <span className="font-medium">Tax (5%):</span>
-          <span className="font-semibold">LKR {bill.tax.toLocaleString()}</span>
+          <span className="font-medium">Service Charge ({bill.billType === 'room' ? '10%' : '15%'}):</span>
+          <span className="font-semibold">LKR {bill.serviceCharge.toLocaleString()}</span>
         </div>
         {bill.additionalChargesTotal > 0 && (
           <div className="flex justify-between py-2 border-b">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { functionPackages, serviceChargeRate, taxRate } from '/src/constants.js';
+import { functionPackages, roomServiceChargeRate, functionServiceChargeRate } from '/src/constants.js';
 import { billService } from '../services/billService';
 
 import Header from './Header';
@@ -98,10 +98,11 @@ const BillingDashboard = ({ handleLogout }) => {
       });
     }
 
+    // Use appropriate service charge based on bill type
+    const serviceChargeRate = billType === 'room' ? roomServiceChargeRate : functionServiceChargeRate;
     const serviceCharge = subtotal * serviceChargeRate;
-    const tax = subtotal * taxRate;
-    const total = subtotal + serviceCharge + tax + additionalChargesTotal;
-    const newBill = { billType, ...formData, details, subtotal, serviceCharge, tax, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal };
+    const total = subtotal + serviceCharge + additionalChargesTotal;
+    const newBill = { billType, ...formData, details, subtotal, serviceCharge, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal };
     
     try {
       const updatedHistory = [newBill, ...billHistory];
@@ -122,11 +123,19 @@ const BillingDashboard = ({ handleLogout }) => {
     }
     setIsProcessing(true);
     try {
+      console.log('Deleting bill:', billNum);
       const result = await billService.deleteBill(billNum);
-      setBillHistory(result.bills);
+      console.log('Delete result:', result);
+      
+      if (result && result.bills) {
+        setBillHistory(result.bills);
+        alert("Bill deleted successfully!");
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (error) {
       console.error("Error deleting bill:", error);
-      alert("Failed to delete bill. Please try again.");
+      alert("Failed to delete bill. Please check the console for details and try again.");
     }
     setIsProcessing(false);
   };

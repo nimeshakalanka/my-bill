@@ -32,11 +32,23 @@ export const billService = {
   // Delete a specific bill
   async deleteBill(billNumber) {
     try {
-      const response = await fetch(`${API_BASE}/bills?billNumber=${billNumber}`, {
-        method: 'DELETE'
+      console.log('Attempting to delete bill:', billNumber);
+      const response = await fetch(`${API_BASE}/bills?billNumber=${encodeURIComponent(billNumber)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) throw new Error('Failed to delete bill');
-      return await response.json();
+      
+      console.log('Delete response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Delete failed:', errorData);
+        throw new Error('Failed to delete bill');
+      }
+      
+      const result = await response.json();
+      console.log('Delete successful, remaining bills:', result.bills?.length);
+      return result;
     } catch (error) {
       console.error('Error deleting bill:', error);
       throw error;

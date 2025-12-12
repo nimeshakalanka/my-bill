@@ -1,5 +1,9 @@
 import { getStore } from '@netlify/blobs';
 
+export const config = {
+  path: '/bills'
+};
+
 export default async (req, context) => {
   const store = getStore('bills');
   
@@ -44,6 +48,8 @@ export default async (req, context) => {
       const url = new URL(req.url);
       const billNumber = url.searchParams.get('billNumber');
       
+      console.log('DELETE request received for bill:', billNumber);
+      
       if (!billNumber) {
         return new Response(JSON.stringify({ error: 'Bill number required' }), { 
           status: 400, 
@@ -52,8 +58,13 @@ export default async (req, context) => {
       }
 
       const billsData = await store.get('all_bills', { type: 'json' }) || [];
+      console.log('Current bills count:', billsData.length);
+      
       const updatedBills = billsData.filter(b => b.billNumber !== billNumber);
+      console.log('Updated bills count:', updatedBills.length);
+      
       await store.setJSON('all_bills', updatedBills);
+      console.log('Bills saved to store successfully');
       
       return new Response(JSON.stringify({ success: true, bills: updatedBills }), { 
         status: 200, 

@@ -4,6 +4,6 @@ export const functionPackages = {
   premium: { price: 3500, name: 'Premium Package', features: ['Luxury Venue', 'Designer Decoration', 'Gourmet Catering', 'Live Band', 'Photography'] }
 };
 
-export const serviceChargeRate = 0.15;
-export const taxRate = 0.05;
+export const roomServiceChargeRate = 0.10;  // 15% for room bookings
+export const functionServiceChargeRate = 0.15;  // 10% for function bookings
 export const APP_NAME = 'Summit Resort';
