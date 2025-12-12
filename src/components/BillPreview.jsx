@@ -301,6 +301,36 @@ const BillPreview = ({ bill, resetForm }) => {
         </table>
         `}
 
+        ${bill.additionalCharges && bill.additionalCharges.length > 0 ? `
+        <div style="margin-top: 20px;">
+          <h3 style="color: #1e40af; font-size: 16px; margin-bottom: 10px; font-weight: bold;">Additional Charges</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th style="text-align: center;">Quantity</th>
+                <th style="text-align: right;">Price (LKR)</th>
+                <th style="text-align: right;">Total (LKR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bill.additionalCharges.map(charge => `
+              <tr>
+                <td>${charge.name}</td>
+                <td style="text-align: center;">${charge.quantity}</td>
+                <td style="text-align: right;">${charge.price.toLocaleString()}</td>
+                <td style="text-align: right;"><strong>${charge.total.toLocaleString()}</strong></td>
+              </tr>
+              `).join('')}
+              <tr style="background: #f8fafc; font-weight: bold;">
+                <td colspan="3" style="text-align: right;">Total Additional Charges:</td>
+                <td style="text-align: right;">${bill.additionalChargesTotal.toLocaleString()}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        ` : ''}
+
         <div class="total-section">
           <div class="total-row">
             <span class="total-label">Subtotal:</span>
@@ -314,6 +344,12 @@ const BillPreview = ({ bill, resetForm }) => {
             <span class="total-label">Tax (5%):</span>
             <span class="total-value">LKR ${bill.tax.toLocaleString()}</span>
           </div>
+          ${bill.additionalChargesTotal > 0 ? `
+          <div class="total-row">
+            <span class="total-label">Additional Charges:</span>
+            <span class="total-value">LKR ${bill.additionalChargesTotal.toLocaleString()}</span>
+          </div>
+          ` : ''}
           <div class="total-row grand-total">
             <span class="total-label">TOTAL AMOUNT:</span>
             <span class="total-value">LKR ${bill.total.toLocaleString()}</span>
@@ -439,6 +475,38 @@ const BillPreview = ({ bill, resetForm }) => {
         </table>
       </div>
 
+      {bill.additionalCharges && bill.additionalCharges.length > 0 && (
+        <div className="mb-6">
+          <h3 className="font-bold text-lg text-blue-800 mb-3">Additional Charges</h3>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="text-left p-3 font-semibold">Item Name</th>
+                  <th className="text-center p-3 font-semibold">Quantity</th>
+                  <th className="text-right p-3 font-semibold">Price (LKR)</th>
+                  <th className="text-right p-3 font-semibold">Total (LKR)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {bill.additionalCharges.map((charge, index) => (
+                  <tr key={index}>
+                    <td className="p-3">{charge.name}</td>
+                    <td className="p-3 text-center">{charge.quantity}</td>
+                    <td className="p-3 text-right">{charge.price.toLocaleString()}</td>
+                    <td className="p-3 text-right font-semibold">{charge.total.toLocaleString()}</td>
+                  </tr>
+                ))}
+                <tr className="bg-blue-50">
+                  <td colSpan="3" className="p-3 text-right font-bold">Total Additional Charges:</td>
+                  <td className="p-3 text-right font-bold text-blue-600">{bill.additionalChargesTotal.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <div className="flex justify-between py-2">
           <span className="font-medium">Subtotal:</span>
@@ -452,6 +520,12 @@ const BillPreview = ({ bill, resetForm }) => {
           <span className="font-medium">Tax (5%):</span>
           <span className="font-semibold">LKR {bill.tax.toLocaleString()}</span>
         </div>
+        {bill.additionalChargesTotal > 0 && (
+          <div className="flex justify-between py-2 border-b">
+            <span className="font-medium">Additional Charges:</span>
+            <span className="font-semibold">LKR {bill.additionalChargesTotal.toLocaleString()}</span>
+          </div>
+        )}
         <div className="flex justify-between py-3 mt-2">
           <span className="text-xl font-bold text-gray-800">GRAND TOTAL:</span>
           <span className="text-2xl font-bold text-blue-600">LKR {bill.total.toLocaleString()}</span>

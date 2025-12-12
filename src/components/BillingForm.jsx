@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Users, DollarSign, Utensils, FileText, Loader2 } from 'lucide-react';
+import { Home, Users, DollarSign, Utensils, FileText, Loader2, Plus, Trash2 } from 'lucide-react';
 import { functionPackages } from '../constants.js';
 
 const BillingForm = ({ billType, setBillType, formData, setFormData, errors, calculateBill, isProcessing }) => {
@@ -10,6 +10,25 @@ const BillingForm = ({ billType, setBillType, formData, setFormData, errors, cal
       finalValue = parseFloat(value) || 0;
     }
     setFormData(prev => ({ ...prev, [name]: finalValue }));
+  };
+
+  const handleAdditionalChargeChange = (index, field, value) => {
+    const updatedCharges = [...(formData.additionalCharges || [])];
+    updatedCharges[index] = {
+      ...updatedCharges[index],
+      [field]: field === 'name' ? value : (parseFloat(value) || 0)
+    };
+    setFormData(prev => ({ ...prev, additionalCharges: updatedCharges }));
+  };
+
+  const addAdditionalCharge = () => {
+    const newCharges = [...(formData.additionalCharges || []), { name: '', quantity: 0, price: 0 }];
+    setFormData(prev => ({ ...prev, additionalCharges: newCharges }));
+  };
+
+  const removeAdditionalCharge = (index) => {
+    const updatedCharges = formData.additionalCharges.filter((_, i) => i !== index);
+    setFormData(prev => ({ ...prev, additionalCharges: updatedCharges }));
   };
 
   return (
@@ -92,9 +111,69 @@ const BillingForm = ({ billType, setBillType, formData, setFormData, errors, cal
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Special Requests</label>
-          <textarea name="specialRequests" value={formData.specialRequests} onChange={handleFormChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Any special requirements..." />
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-gray-700">Additional Charges</label>
+            <button type="button" onClick={addAdditionalCharge} className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+              <Plus className="w-4 h-4" /> Add Item
+            </button>
+          </div>
+          {formData.additionalCharges && formData.additionalCharges.length > 0 && (
+            <div className="space-y-3">
+              {formData.additionalCharges.map((charge, index) => (
+                <div key={index} className="grid grid-cols-12 gap-3 items-end">
+                  <div className="col-span-5">
+                    <label className="block text-xs text-gray-600 mb-1">Item Name</label>
+                    <input 
+                      type="text" 
+                      value={charge.name} 
+                      onChange={(e) => handleAdditionalChargeChange(index, 'name', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="e.g., Plates, Tea cups, Extra bites"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <label className="block text-xs text-gray-600 mb-1">Quantity</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      value={charge.quantity} 
+                      onChange={(e) => handleAdditionalChargeChange(index, 'quantity', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="col-span-3">
+                    <label className="block text-xs text-gray-600 mb-1">Price (LKR)</label>
+                    <input 
+                      type="number" 
+                      min="0"
+                      value={charge.price} 
+                      onChange={(e) => handleAdditionalChargeChange(index, 'price', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <button 
+                      type="button" 
+                      onClick={() => removeAdditionalCharge(index)}
+                      className="w-full p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                    >
+                      <Trash2 className="w-4 h-4 mx-auto" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
+        {billType === 'room' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Special Requests</label>
+            <textarea name="specialRequests" value={formData.specialRequests} onChange={handleFormChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Any special requirements..." />
+          </div>
+        )}
 
         <button onClick={calculateBill} disabled={isProcessing} className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition shadow-lg flex items-center justify-center gap-2 ${billType === 'room' ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'bg-gradient-to-r from-purple-600 to-pink-600'} disabled:opacity-50`}>
           {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <><FileText className="w-5 h-5" /> Generate Invoice</>}

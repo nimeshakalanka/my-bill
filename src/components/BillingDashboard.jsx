@@ -14,7 +14,7 @@ const BillingDashboard = ({ handleLogout }) => {
     guestName: '', guestPhone: '', guestEmail: '', roomNumber: '',
     checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0,
     lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50,
-    functionDate: '', specialRequests: ''
+    functionDate: '', specialRequests: '', additionalCharges: []
   });
 
   const [bill, setBill] = useState(null);
@@ -85,10 +85,23 @@ const BillingDashboard = ({ handleLogout }) => {
       details = { type: 'Function Booking', packageName: functionPackages[formData.packageType].name, packageFeatures: functionPackages[formData.packageType].features, functionDate: formData.functionDate, numPeople: formData.numPeople, pricePerPerson: packagePrice };
     }
 
+    // Calculate additional charges
+    let additionalChargesTotal = 0;
+    const additionalChargesDetails = [];
+    if (formData.additionalCharges && formData.additionalCharges.length > 0) {
+      formData.additionalCharges.forEach(charge => {
+        if (charge.name && charge.quantity > 0 && charge.price > 0) {
+          const itemTotal = charge.quantity * charge.price;
+          additionalChargesTotal += itemTotal;
+          additionalChargesDetails.push({ ...charge, total: itemTotal });
+        }
+      });
+    }
+
     const serviceCharge = subtotal * serviceChargeRate;
     const tax = subtotal * taxRate;
-    const total = subtotal + serviceCharge + tax;
-    const newBill = { billType, ...formData, details, subtotal, serviceCharge, tax, total, billNumber, billDate };
+    const total = subtotal + serviceCharge + tax + additionalChargesTotal;
+    const newBill = { billType, ...formData, details, subtotal, serviceCharge, tax, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal };
     
     try {
       const updatedHistory = [newBill, ...billHistory];
@@ -122,7 +135,7 @@ const BillingDashboard = ({ handleLogout }) => {
   
   const resetForm = () => {
     setBill(null); setErrors({});
-    setFormData({ guestName: '', guestPhone: '', guestEmail: '', roomNumber: '', checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0, lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50, functionDate: '', specialRequests: '' });
+    setFormData({ guestName: '', guestPhone: '', guestEmail: '', roomNumber: '', checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0, lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50, functionDate: '', specialRequests: '', additionalCharges: [] });
   };
 
   if (isLoading) return (<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 md:p-8 flex items-center justify-center"><Loader2 className="w-16 h-16 text-blue-600 animate-spin" /><span className="text-xl font-medium text-gray-700 ml-4">Loading Bill History...</span></div>);
