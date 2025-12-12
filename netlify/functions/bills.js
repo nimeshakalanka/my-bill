@@ -5,7 +5,13 @@ export const config = {
 };
 
 export default async (req, context) => {
-  const store = getStore('bills');
+  try {
+    const store = getStore({
+      name: 'bills',
+      consistency: 'strong'
+    });
+    
+    console.log('Store initialized successfully');
   
   // Handle CORS
   const headers = {
@@ -32,15 +38,31 @@ export default async (req, context) => {
     // POST - Create new bill or update all bills
     if (req.method === 'POST') {
       const body = await req.json();
+      console.log('POST request received, action:', body.action, 'bills count:', body.bills?.length);
       
       if (body.action === 'save') {
+        if (!body.bills || !Array.isArray(body.bills)) {
+          console.error('Invalid bills data:', body.bills);
+          return new Response(JSON.stringify({ error: 'Invalid bills data' }), { 
+            status: 400, 
+            headers 
+          });
+        }
+        
         // Save entire bills array
         await store.setJSON('all_bills', body.bills);
-        return new Response(JSON.stringify({ success: true }), { 
+        console.log('Bills saved successfully to Netlify Blobs');
+        
+        return new Response(JSON.stringify({ success: true, count: body.bills.length }), { 
           status: 200, 
           headers 
         });
       }
+      
+      return new Response(JSON.stringify({ error: 'Invalid action' }), { 
+        status: 400, 
+        headers 
+      });
     }
 
     // DELETE a specific bill
@@ -79,7 +101,11 @@ export default async (req, context) => {
 
   } catch (error) {
     console.error('Function error:', error);
-    return new Response(JSON.stringify({ error: error.message }), { 
+    console.error('Error stack:', error.stack);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.stack 
+    }), { 
       status: 500, 
       headers 
     });

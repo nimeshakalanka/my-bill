@@ -106,12 +106,17 @@ const BillingDashboard = ({ handleLogout }) => {
     
     try {
       const updatedHistory = [newBill, ...billHistory];
+      console.log('Attempting to save bill...', newBill);
+      
       await billService.saveBills(updatedHistory);
+      
       setBillHistory(updatedHistory);
       setBill(newBill);
+      console.log('Bill saved and state updated successfully');
     } catch (error) {
       console.error("Error saving bill:", error);
-      alert("Failed to save bill. Please try again.");
+      console.error("Error details:", error.message, error.stack);
+      alert(`Failed to save bill. Error: ${error.message}\n\nPlease check the browser console for details.`);
     }
     setIsProcessing(false);
   };
