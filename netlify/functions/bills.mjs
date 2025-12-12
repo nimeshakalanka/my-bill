@@ -76,9 +76,16 @@ export default async (req, context) => {
 
       const billsData = await store.get('all_bills', { type: 'json' }) || [];
       console.log('Current bills count:', billsData.length);
+      console.log('Bill numbers in DB:', billsData.map(b => b.billNumber));
+      console.log('Looking for bill to delete:', billNumber);
       
       const updatedBills = billsData.filter(b => b.billNumber !== billNumber);
-      console.log('Updated bills count:', updatedBills.length);
+      console.log('Updated bills count after filter:', updatedBills.length);
+      console.log('Remaining bill numbers:', updatedBills.map(b => b.billNumber));
+      
+      if (billsData.length === updatedBills.length) {
+        console.warn('WARNING: No bills were removed! Bill not found.');
+      }
       
       await store.setJSON('all_bills', updatedBills);
       console.log('Bills saved to store successfully');

@@ -129,11 +129,21 @@ const BillingDashboard = ({ handleLogout }) => {
     setIsProcessing(true);
     try {
       console.log('Deleting bill:', billNum);
+      console.log('Current bill history count:', billHistory.length);
+      
       const result = await billService.deleteBill(billNum);
       console.log('Delete result:', result);
+      console.log('Returned bills count:', result?.bills?.length);
       
       if (result && result.bills) {
+        console.log('Setting new bill history...');
         setBillHistory(result.bills);
+        
+        // Verify the state will update
+        setTimeout(() => {
+          console.log('Bill history after delete:', billHistory.length);
+        }, 100);
+        
         alert("Bill deleted successfully!");
       } else {
         throw new Error('Invalid response from server');
