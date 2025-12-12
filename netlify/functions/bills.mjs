@@ -5,13 +5,12 @@ export const config = {
 };
 
 export default async (req, context) => {
-  try {
-    const store = getStore({
-      name: 'bills',
-      consistency: 'strong'
-    });
-    
-    console.log('Store initialized successfully');
+  const store = getStore({
+    name: 'bills',
+    consistency: 'strong'
+  });
+  
+  console.log('Store initialized successfully');
   
   // Handle CORS
   const headers = {
