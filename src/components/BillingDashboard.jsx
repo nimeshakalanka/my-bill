@@ -15,7 +15,7 @@ const BillingDashboard = ({ handleLogout }) => {
     checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0,
     lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50,
     functionDate: '', specialRequests: '', additionalCharges: [],
-    customPackagePrices: {}
+    customPackagePrices: {}, discountType: 'none', discountValue: 0
   });
 
   const [bill, setBill] = useState(null);
@@ -99,11 +99,19 @@ const BillingDashboard = ({ handleLogout }) => {
       });
     }
 
+    // Calculate discount
+    let discount = 0;
+    if (formData.discountType === 'percentage') {
+      discount = (subtotal + additionalChargesTotal) * (formData.discountValue / 100);
+    } else if (formData.discountType === 'fixed') {
+      discount = formData.discountValue;
+    }
+
     // Use appropriate service charge based on bill type
     const serviceChargeRate = billType === 'room' ? roomServiceChargeRate : functionServiceChargeRate;
     const serviceCharge = subtotal * serviceChargeRate;
-    const total = subtotal + serviceCharge + additionalChargesTotal;
-    const newBill = { billType, ...formData, details, subtotal, serviceCharge, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal };
+    const total = subtotal + serviceCharge + additionalChargesTotal - discount;
+    const newBill = { billType, ...formData, details, subtotal, serviceCharge, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal, discount, discountType: formData.discountType, discountValue: formData.discountValue };
     
     try {
       const updatedHistory = [newBill, ...billHistory];

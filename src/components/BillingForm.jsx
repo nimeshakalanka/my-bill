@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Users, DollarSign, Utensils, FileText, Loader2, Plus, Trash2 } from 'lucide-react';
+import { Home, Users, DollarSign, Utensils, FileText, Loader2, Plus, Trash2, Percent } from 'lucide-react';
 import { functionPackages } from '../constants.js';
 
 const BillingForm = ({ billType, setBillType, formData, setFormData, errors, calculateBill, isProcessing }) => {
@@ -195,6 +195,44 @@ const BillingForm = ({ billType, setBillType, formData, setFormData, errors, cal
             <textarea name="specialRequests" value={formData.specialRequests} onChange={handleFormChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Any special requirements..." />
           </div>
         )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+            <Percent className="w-5 h-5 text-green-600" /> Discount (Optional)
+          </label>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Discount Type</label>
+              <select 
+                name="discountType" 
+                value={formData.discountType} 
+                onChange={handleFormChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="none">No Discount</option>
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (LKR)</option>
+              </select>
+            </div>
+            {formData.discountType !== 'none' && (
+              <div>
+                <label className="block text-xs text-gray-600 mb-1">
+                  {formData.discountType === 'percentage' ? 'Discount Percentage (%)' : 'Discount Amount (LKR)'}
+                </label>
+                <input 
+                  type="number" 
+                  name="discountValue" 
+                  min="0"
+                  max={formData.discountType === 'percentage' ? '100' : undefined}
+                  value={formData.discountValue} 
+                  onChange={handleFormChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder={formData.discountType === 'percentage' ? '0-100' : '0'}
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
         <button onClick={calculateBill} disabled={isProcessing} className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition shadow-lg flex items-center justify-center gap-2 ${billType === 'room' ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'bg-gradient-to-r from-purple-600 to-pink-600'} disabled:opacity-50`}>
           {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <><FileText className="w-5 h-5" /> Generate Invoice</>}

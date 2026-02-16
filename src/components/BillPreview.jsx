@@ -346,6 +346,12 @@ const BillPreview = ({ bill, resetForm }) => {
             <span class="total-value">LKR ${bill.additionalChargesTotal.toLocaleString()}</span>
           </div>
           ` : ''}
+          ${bill.discount > 0 ? `
+          <div class="total-row" style="color: #16a34a;">
+            <span class="total-label">Discount ${bill.discountType === 'percentage' ? '(' + bill.discountValue + '%)' : ''}:</span>
+            <span class="total-value">- LKR ${bill.discount.toLocaleString()}</span>
+          </div>
+          ` : ''}
           <div class="total-row grand-total">
             <span class="total-label">TOTAL AMOUNT:</span>
             <span class="total-value">LKR ${bill.total.toLocaleString()}</span>
