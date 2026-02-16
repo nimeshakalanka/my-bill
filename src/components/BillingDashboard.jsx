@@ -14,7 +14,8 @@ const BillingDashboard = ({ handleLogout }) => {
     guestName: '', guestPhone: '', guestEmail: '', roomNumber: '',
     checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0,
     lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50,
-    functionDate: '', specialRequests: '', additionalCharges: []
+    functionDate: '', specialRequests: '', additionalCharges: [],
+    customPackagePrices: {}
   });
 
   const [bill, setBill] = useState(null);
@@ -80,7 +81,7 @@ const BillingDashboard = ({ handleLogout }) => {
       subtotal = roomTotal + foodTotal;
       details = { type: 'Room Booking', roomNumber: formData.roomNumber, checkIn: formData.checkIn, checkOut: formData.checkOut, nights, roomPrice: formData.roomPrice, roomTotal, breakfast: formData.breakfast, lunch: formData.lunch, dinner: formData.dinner, foodTotal };
     } else {
-      const packagePrice = functionPackages[formData.packageType].price;
+      const packagePrice = formData.customPackagePrices?.[formData.packageType] ?? functionPackages[formData.packageType].price;
       subtotal = packagePrice * formData.numPeople;
       details = { type: 'Function Booking', packageName: functionPackages[formData.packageType].name, packageFeatures: functionPackages[formData.packageType].features, functionDate: formData.functionDate, numPeople: formData.numPeople, pricePerPerson: packagePrice };
     }

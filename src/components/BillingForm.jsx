@@ -31,6 +31,16 @@ const BillingForm = ({ billType, setBillType, formData, setFormData, errors, cal
     setFormData(prev => ({ ...prev, additionalCharges: updatedCharges }));
   };
 
+  const handlePackagePriceChange = (packageKey, newPrice) => {
+    const updatedPrices = { ...formData.customPackagePrices };
+    updatedPrices[packageKey] = parseFloat(newPrice) || 0;
+    setFormData(prev => ({ ...prev, customPackagePrices: updatedPrices }));
+  };
+
+  const getPackagePrice = (packageKey) => {
+    return formData.customPackagePrices?.[packageKey] ?? functionPackages[packageKey].price;
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
       <div className="flex gap-4 mb-6">
@@ -97,8 +107,19 @@ const BillingForm = ({ billType, setBillType, formData, setFormData, errors, cal
                 {Object.entries(functionPackages).map(([key, pkg]) => (
                   <div key={key} onClick={() => setFormData(prev => ({ ...prev, packageType: key }))} className={`cursor-pointer border-2 rounded-lg p-4 transition ${formData.packageType === key ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-purple-300'}`}>
                     <div className="flex items-center justify-between mb-2"><h3 className="font-bold text-lg">{pkg.name}</h3><DollarSign className="w-5 h-5 text-green-600" /></div>
-                    <p className="text-2xl font-bold text-purple-600 mb-3">LKR {pkg.price.toLocaleString()}<span className="text-sm text-gray-600 font-normal">/person</span></p>
-                    <ul className="space-y-1">{pkg.features.map((f, i) => (<li key={i} className="text-sm text-gray-600">✓ {f}</li>))}</ul>
+                    <p className="text-2xl font-bold text-purple-600 mb-3">LKR {getPackagePrice(key).toLocaleString()}<span className="text-sm text-gray-600 font-normal">/person</span></p>
+                    <ul className="space-y-1 mb-3">{pkg.features.map((f, i) => (<li key={i} className="text-sm text-gray-600">✓ {f}</li>))}</ul>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <label className="block text-xs text-gray-600 mb-1">Custom Price (LKR)</label>
+                      <input 
+                        type="number" 
+                        min="0"
+                        value={getPackagePrice(key)} 
+                        onChange={(e) => handlePackagePriceChange(key, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
+                        placeholder={pkg.price}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
