@@ -1,549 +1,607 @@
 import React from 'react';
-import { Download } from 'lucide-react';
-import { APP_NAME } from '/src/constants.js';
+import { Download, RotateCcw } from 'lucide-react';
 
 const BillPreview = ({ bill, resetForm }) => {
 
   const generatePDF = () => {
-    const printWindow = window.open('', '', 'width=800,height=600');
+    const printWindow = window.open('', '', 'width=900,height=1200');
     const content = `
       <!DOCTYPE html>
       <html>
       <head>
         <title>Invoice - ${bill.billNumber}</title>
         <style>
+          @page {
+            size: A4;
+            margin: 12mm 14mm 12mm 14mm;
+          }
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 40px;
-            max-width: 800px;
-            margin: 0 auto;
-            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            color: #111;
+            background: #fff;
+            width: 100%;
           }
-          
-          /* --- HEADER LAYOUT (Updated for Side-by-Side) --- */
-          .header {
-            /* Reduced padding from 30px to 15px to reduce height */
-            padding: 15px 20px; 
-            margin-bottom: 20px;
-            border-bottom: 4px solid #2563eb;
-            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
-            color: white;
-            border-radius: 10px;
-          }
-          
-          .header-content {
-            display: flex;
-            align-items: center;     /* Vertically center logo and text */
-            justify-content: center; /* Horizontally center the group */
-            gap: 20px;               /* Space between logo and text */
+
+          /* ===== LETTERHEAD HEADER ===== */
+          .letterhead {
+            text-align: center;
+            padding-bottom: 8px;
             margin-bottom: 10px;
           }
-
-          .logo {
-            width: 70px;  /* Reduced size */
-            height: 70px;
+          .letterhead img.logo {
+            width: 62px;
+            height: 62px;
             object-fit: contain;
-            /* No margin needed here anymore */
+            display: block;
+            margin: 0 auto 4px auto;
+          }
+          .letterhead h1 {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+            color: #000;
+          }
+          .letterhead .address-line {
+            font-size: 10.5px;
+            color: #111;
+            margin: 2px 0;
+          }
+          .letterhead .contact-line {
+            font-size: 10.5px;
+            color: #111;
+            margin: 2px 0;
+            font-weight: 600;
+          }
+          /* Double horizontal rule like the letterhead */
+          .header-rule {
+            border: none;
+            border-top: 3px double #111;
+            margin: 7px 0 10px 0;
           }
 
-          .header-text {
-            text-align: left; /* Align text to the left of the block */
+          /* ===== INVOICE TITLE BAR ===== */
+          .invoice-title-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e40af;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-bottom: 10px;
           }
-
-          .hotel-name {
-            font-size: 28px; /* Slightly smaller to fit better */
-            font-weight: bold;
-            margin: 0;
-            line-height: 1.2;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-          }
-
-          .tagline {
-            margin: 4px 0;
-            font-size: 14px;
-            opacity: 0.9;
-          }
-
-          .address {
-            font-size: 12px;
-            opacity: 0.8;
-            margin: 0;
-          }
-
-          .invoice-label {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 5px;
-            padding-top: 5px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            color: #fbbf24;
+          .invoice-title-bar .inv-label {
+            font-size: 13px;
             font-weight: bold;
             letter-spacing: 1px;
           }
+          .invoice-title-bar .inv-meta {
+            font-size: 10px;
+            text-align: right;
+            line-height: 1.5;
+          }
 
-          /* --- REST OF THE CSS --- */
+          /* ===== TWO-COLUMN INFO GRID ===== */
           .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 10px;
           }
-          .info-section {
+          .info-box {
             background: #f8fafc;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #2563eb;
+            border-left: 3px solid #2563eb;
+            padding: 8px 10px;
+            border-radius: 3px;
           }
-          .info-title {
-            font-weight: bold;
-            color: #1e40af;
-            font-size: 12px;
-            margin-bottom: 15px;
+          .info-box .box-title {
+            font-size: 9px;
+            font-weight: 700;
             text-transform: uppercase;
+            color: #1e40af;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
           }
           .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            font-size: 10px;
+            padding: 3px 0;
             border-bottom: 1px solid #e2e8f0;
           }
           .info-row:last-child { border-bottom: none; }
-          .info-label { font-weight: 600; color: #64748b; }
-          .info-value { color: #1e293b; }
-          .package-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 2px solid #3b82f6;
+          .info-row .lbl { color: #555; font-weight: 600; }
+          .info-row .val { color: #111; }
+
+          /* ===== DETAIL BOX ===== */
+          .detail-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 4px;
+            padding: 7px 10px;
+            margin-bottom: 10px;
+            font-size: 10px;
           }
-          .package-name {
-            font-size: 15px;
+          .detail-box .detail-title {
+            font-size: 11px;
             font-weight: bold;
             color: #1e40af;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
           }
-          .table {
+          .detail-box p { margin: 2px 0; }
+          .feature-tag {
+            display: inline-block;
+            background: white;
+            border: 1px solid #93c5fd;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 9px;
+            margin: 2px 2px 0 0;
+            color: #1e40af;
+          }
+
+          /* ===== TABLES ===== */
+          table {
             width: 100%;
             border-collapse: collapse;
-            margin: 10px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 8px;
+            font-size: 10px;
           }
-          .table th {
+          table thead tr {
             background: #1e40af;
             color: white;
-            padding: 10px;
+          }
+          table th {
+            padding: 6px 8px;
             text-align: left;
+            font-weight: 700;
           }
-          .table td {
-            padding: 10px 15px;
+          table td {
+            padding: 5px 8px;
             border-bottom: 1px solid #e2e8f0;
+            color: #111;
           }
-          .total-section {
-            margin-top: 20px;
+          table tbody tr:last-child td { border-bottom: none; }
+          table tbody tr:nth-child(even) { background: #f8fafc; }
+          .section-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #1e40af;
+            margin: 8px 0 4px 0;
+          }
+
+          /* ===== TOTALS ===== */
+          .totals-block {
             background: #f8fafc;
-            padding: 10px;
-            border-radius: 8px;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
           }
           .total-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            font-size: 10px;
+            padding: 3px 0;
+            border-bottom: 1px solid #e2e8f0;
+          }
+          .total-row:last-child { border-bottom: none; }
+          .total-row .t-lbl { color: #555; font-weight: 600; }
+          .total-row .t-val { font-weight: 600; color: #111; }
+          .total-row.discount .t-val { color: #16a34a; }
+          .grand-row {
+            display: flex;
+            justify-content: space-between;
             font-size: 14px;
-          }
-          .total-label { font-weight: 600; color: #475569; }
-          .total-value { color: #1e293b; font-weight: 600; }
-          .grand-total {
-            font-size: 20px;
+            font-weight: 900;
             color: #1e40af;
-            border-top: 3px solid #2563eb;
-            padding-top: 15px;
-            margin-top: 10px;
-            font-weight: bold;
-          }
-          .footer {
-            margin-top: 15px;
-            text-align: center;
-            padding-top: 10px;
-            border-top: 2px solid #e2e8f0;
+            border-top: 2px solid #2563eb;
+            margin-top: 6px;
+            padding-top: 6px;
           }
 
-          @media print { 
-            body { padding: 5px; margin: 0; }
-            .header, .info-grid, .package-box, .table, .total-section, .footer { page-break-inside: avoid; }
-            .header { padding: 5px; margin-bottom: 5px; }
-            .logo { width: 50px; height: 50px; } /* Smaller logo for print */
-            .hotel-name { font-size: 20px; }
+          /* ===== SPECIAL REQUESTS ===== */
+          .special-box {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            padding: 6px 10px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            font-size: 10px;
+          }
+
+          /* ===== FOOTER ===== */
+          .page-footer {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          }
+          .page-footer .reg-no {
+            font-size: 10px;
+            font-weight: 700;
+            color: #111;
+          }
+          .page-footer .thank-you {
+            text-align: right;
+            font-size: 10px;
+            color: #555;
+          }
+          .page-footer .thank-you strong {
+            color: #1e40af;
+            font-size: 11px;
+            display: block;
+          }
+
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           }
         </style>
       </head>
       <body>
-        <div class="header">
-          <div class="header-content">
-            
-            <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Logo" class="logo" />
-            
-            <div class="header-text">
-              <h1 class="hotel-name">${APP_NAME}</h1>
-              <p class="tagline">Your Comfort is Our Priority</p>
-              <p class="address">173A, Theresiya waththa, Ananda Maithri Road, Balangoda. | Tel: +94 74 337 7071</p>
-            </div>
 
+        <!-- LETTERHEAD HEADER -->
+        <div class="letterhead">
+          <img src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" alt="Summit Resort Logo" class="logo" />
+          <h1>Summit Resort</h1>
+          <p class="address-line">No: 173A, Theresiya Waththa, Ananda Maithreya Mawatha, Balangoda</p>
+          <p class="address-line">summitresort@gmail.com</p>
+          <p class="contact-line">0743377071 &nbsp; 0770208493</p>
+        </div>
+        <hr class="header-rule" />
+
+        <!-- INVOICE TITLE BAR -->
+        <div class="invoice-title-bar">
+          <span class="inv-label">TAX INVOICE</span>
+          <div class="inv-meta">
+            <div>Invoice No: <strong>${bill.billNumber}</strong></div>
+            <div>Date: ${new Date(bill.billDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
           </div>
         </div>
 
+        <!-- GUEST & INVOICE INFO -->
         <div class="info-grid">
-          <div class="info-section">
-            <div class="info-title">Invoice Details</div>
-            <div class="info-row">
-              <span class="info-label">Invoice No:</span>
-              <span class="info-value">${bill.billNumber}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Date:</span>
-              <span class="info-value">${new Date(bill.billDate).toLocaleString()}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Type:</span>
-              <span class="info-value">${bill.details.type}</span>
-            </div>
+          <div class="info-box">
+            <div class="box-title">Invoice Details</div>
+            <div class="info-row"><span class="lbl">Invoice No:</span><span class="val">${bill.billNumber}</span></div>
+            <div class="info-row"><span class="lbl">Date:</span><span class="val">${new Date(bill.billDate).toLocaleDateString('en-GB')}</span></div>
+            <div class="info-row"><span class="lbl">Type:</span><span class="val">${bill.details.type}</span></div>
           </div>
-
-          <div class="info-section">
-            <div class="info-title">Guest Information</div>
-            <div class="info-row">
-              <span class="info-label">Name:</span>
-              <span class="info-value">${bill.guestName}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Phone:</span>
-              <span class="info-value">${bill.guestPhone}</span>
-            </div>
-            ${bill.guestEmail ? `
-            <div class="info-row">
-              <span class="info-label">Email:</span>
-              <span class="info-value">${bill.guestEmail}</span>
-            </div>` : ''}
+          <div class="info-box">
+            <div class="box-title">Guest Information</div>
+            <div class="info-row"><span class="lbl">Name:</span><span class="val">${bill.guestName}</span></div>
+            <div class="info-row"><span class="lbl">Phone:</span><span class="val">${bill.guestPhone}</span></div>
+            ${bill.guestEmail ? `<div class="info-row"><span class="lbl">Email:</span><span class="val">${bill.guestEmail}</span></div>` : ''}
           </div>
         </div>
 
+        <!-- BOOKING DETAILS -->
         ${bill.billType === 'room' ? `
-        <div class="package-box">
-          <div class="package-name">Room Booking Details</div>
-          <p><strong>Room Number:</strong> ${bill.details.roomNumber}</p>
-          <p><strong>Check-in:</strong> ${new Date(bill.details.checkIn).toLocaleDateString()}</p>
-          <p><strong>Check-out:</strong> ${new Date(bill.details.checkOut).toLocaleDateString()}</p>
-          <p><strong>Number of Nights:</strong> ${bill.details.nights}</p>
+        <div class="detail-box">
+          <div class="detail-title">Room Booking Details</div>
+          <p><strong>Room Number:</strong> ${bill.details.roomNumber} &nbsp;&nbsp; <strong>Nights:</strong> ${bill.details.nights}</p>
+          <p><strong>Check-in:</strong> ${new Date(bill.details.checkIn).toLocaleDateString('en-GB')} &nbsp;&nbsp; <strong>Check-out:</strong> ${new Date(bill.details.checkOut).toLocaleDateString('en-GB')}</p>
         </div>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th style="text-align: right;">Amount (LKR)</th>
-            </tr>
-          </thead>
+        <table>
+          <thead><tr>
+            <th>Description</th>
+            <th style="text-align:right;">Amount (LKR)</th>
+          </tr></thead>
           <tbody>
             <tr>
-              <td>Room Charges (${bill.details.nights} nights @ LKR ${bill.details.roomPrice.toLocaleString()}/night)</td>
-              <td style="text-align: right;"><strong>${bill.details.roomTotal.toLocaleString()}</strong></td>
+              <td>Room Charges (${bill.details.nights} night${bill.details.nights > 1 ? 's' : ''} × LKR ${bill.details.roomPrice.toLocaleString()}/night)</td>
+              <td style="text-align:right;font-weight:700;">${bill.details.roomTotal.toLocaleString()}</td>
             </tr>
-            ${bill.details.breakfast > 0 ? `
-            <tr>
-              <td>Breakfast (${bill.details.nights} days @ LKR ${bill.details.breakfast.toLocaleString()}/day)</td>
-              <td style="text-align: right;">${(bill.details.breakfast * bill.details.nights).toLocaleString()}</td>
-            </tr>` : ''}
-            ${bill.details.lunch > 0 ? `
-            <tr>
-              <td>Lunch (${bill.details.nights} days @ LKR ${bill.details.lunch.toLocaleString()}/day)</td>
-              <td style="text-align: right;">${(bill.details.lunch * bill.details.nights).toLocaleString()}</td>
-            </tr>` : ''}
-            ${bill.details.dinner > 0 ? `
-            <tr>
-              <td>Dinner (${bill.details.nights} days @ LKR ${bill.details.dinner.toLocaleString()}/day)</td>
-              <td style="text-align: right;">${(bill.details.dinner * bill.details.nights).toLocaleString()}</td>
-            </tr>` : ''}
-            ${bill.details.foodTotal > 0 ? `
-            <tr style="background: #f8fafc; font-weight: bold;">
-              <td>Total Food Charges</td>
-              <td style="text-align: right;">${bill.details.foodTotal.toLocaleString()}</td>
-            </tr>` : ''}
+            ${bill.details.breakfast > 0 ? `<tr><td>Breakfast (${bill.details.nights} days × LKR ${bill.details.breakfast.toLocaleString()}/day)</td><td style="text-align:right;">${(bill.details.breakfast * bill.details.nights).toLocaleString()}</td></tr>` : ''}
+            ${bill.details.lunch > 0 ? `<tr><td>Lunch (${bill.details.nights} days × LKR ${bill.details.lunch.toLocaleString()}/day)</td><td style="text-align:right;">${(bill.details.lunch * bill.details.nights).toLocaleString()}</td></tr>` : ''}
+            ${bill.details.dinner > 0 ? `<tr><td>Dinner (${bill.details.nights} days × LKR ${bill.details.dinner.toLocaleString()}/day)</td><td style="text-align:right;">${(bill.details.dinner * bill.details.nights).toLocaleString()}</td></tr>` : ''}
+            ${bill.details.foodTotal > 0 ? `<tr style="background:#eff6ff;font-weight:700;"><td>Total Food Charges</td><td style="text-align:right;">${bill.details.foodTotal.toLocaleString()}</td></tr>` : ''}
           </tbody>
         </table>
         ` : `
-        <div class="package-box">
-          <div class="package-name">${bill.details.packageName}</div>
-          <p><strong>Function Date:</strong> ${new Date(bill.details.functionDate).toLocaleDateString()}</p>
-          <p><strong>Number of Guests:</strong> ${bill.details.numPeople}</p>
-          <div style="margin-top: 10px;">
-            ${bill.details.packageFeatures.map(f => `<span style="background: white; padding: 5px 10px; margin: 5px; display: inline-block; border-radius: 15px; font-size: 12px;">✓ ${f}</span>`).join('')}
+        <div class="detail-box">
+          <div class="detail-title">${bill.details.packageName}</div>
+          <p><strong>Function Date:</strong> ${new Date(bill.details.functionDate).toLocaleDateString('en-GB')} &nbsp;&nbsp; <strong>Number of Guests:</strong> ${bill.details.numPeople}</p>
+          <div style="margin-top:5px;">
+            ${bill.details.packageFeatures.map(f => `<span class="feature-tag">✓ ${f}</span>`).join('')}
           </div>
         </div>
-
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th style="text-align: center;">Quantity</th>
-              <th style="text-align: right;">Rate (LKR)</th>
-              <th style="text-align: right;">Amount (LKR)</th>
-            </tr>
-          </thead>
+        <table>
+          <thead><tr>
+            <th>Description</th>
+            <th style="text-align:center;">Guests</th>
+            <th style="text-align:right;">Rate (LKR)</th>
+            <th style="text-align:right;">Amount (LKR)</th>
+          </tr></thead>
           <tbody>
             <tr>
-              <td><strong>${bill.details.packageName}</strong></td>
-              <td style="text-align: center;">${bill.details.numPeople}</td>
-              <td style="text-align: right;">${bill.details.pricePerPerson.toLocaleString()}</td>
-              <td style="text-align: right;"><strong>${bill.subtotal.toLocaleString()}</strong></td>
+              <td>${bill.details.packageName}</td>
+              <td style="text-align:center;">${bill.details.numPeople}</td>
+              <td style="text-align:right;">${bill.details.pricePerPerson.toLocaleString()}</td>
+              <td style="text-align:right;font-weight:700;">${bill.subtotal.toLocaleString()}</td>
             </tr>
           </tbody>
         </table>
         `}
 
+        <!-- ADDITIONAL CHARGES -->
         ${bill.additionalCharges && bill.additionalCharges.length > 0 ? `
-        <div style="margin-top: 20px;">
-          <h3 style="color: #1e40af; font-size: 16px; margin-bottom: 10px; font-weight: bold;">Additional Charges</h3>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Item Name</th>
-                <th style="text-align: center;">Quantity</th>
-                <th style="text-align: right;">Price (LKR)</th>
-                <th style="text-align: right;">Total (LKR)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${bill.additionalCharges.map(charge => `
-              <tr>
-                <td>${charge.name}</td>
-                <td style="text-align: center;">${charge.quantity}</td>
-                <td style="text-align: right;">${charge.price.toLocaleString()}</td>
-                <td style="text-align: right;"><strong>${charge.total.toLocaleString()}</strong></td>
-              </tr>
-              `).join('')}
-              <tr style="background: #f8fafc; font-weight: bold;">
-                <td colspan="3" style="text-align: right;">Total Additional Charges:</td>
-                <td style="text-align: right;">${bill.additionalChargesTotal.toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="section-label">Additional Charges</div>
+        <table>
+          <thead><tr>
+            <th>Item</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:right;">Price (LKR)</th>
+            <th style="text-align:right;">Total (LKR)</th>
+          </tr></thead>
+          <tbody>
+            ${bill.additionalCharges.map(c => `
+            <tr>
+              <td>${c.name}</td>
+              <td style="text-align:center;">${c.quantity}</td>
+              <td style="text-align:right;">${c.price.toLocaleString()}</td>
+              <td style="text-align:right;font-weight:700;">${c.total.toLocaleString()}</td>
+            </tr>`).join('')}
+            <tr style="background:#eff6ff;font-weight:700;">
+              <td colspan="3" style="text-align:right;">Total Additional:</td>
+              <td style="text-align:right;">${bill.additionalChargesTotal.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
         ` : ''}
 
-        <div class="total-section">
-          <div class="total-row">
-            <span class="total-label">Subtotal:</span>
-            <span class="total-value">LKR ${bill.subtotal.toLocaleString()}</span>
-          </div>
-          <div class="total-row">
-            <span class="total-label">Service Charge (${bill.billType === 'room' ? '15%' : '10%'}):</span>
-            <span class="total-value">LKR ${bill.serviceCharge.toLocaleString()}</span>
-          </div>
-          ${bill.additionalChargesTotal > 0 ? `
-          <div class="total-row">
-            <span class="total-label">Additional Charges:</span>
-            <span class="total-value">LKR ${bill.additionalChargesTotal.toLocaleString()}</span>
-          </div>
-          ` : ''}
-          ${bill.discount > 0 ? `
-          <div class="total-row" style="color: #16a34a;">
-            <span class="total-label">Discount ${bill.discountType === 'percentage' ? '(' + bill.discountValue + '%)' : ''}:</span>
-            <span class="total-value">- LKR ${bill.discount.toLocaleString()}</span>
-          </div>
-          ` : ''}
-          <div class="total-row grand-total">
-            <span class="total-label">TOTAL AMOUNT:</span>
-            <span class="total-value">LKR ${bill.total.toLocaleString()}</span>
-          </div>
-        </div>
-
+        <!-- SPECIAL REQUESTS -->
         ${bill.specialRequests ? `
-        <div style="margin-top: 15px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
-          <strong style="color: #92400e;">Special Requests:</strong><br>
-          <span style="color: #78350f;">${bill.specialRequests}</span>
+        <div class="special-box">
+          <strong>Special Requests:</strong> ${bill.specialRequests}
         </div>` : ''}
 
-        <div class="footer">
-          <p style="font-size: 18px; color: #1e40af; font-weight: bold;">Thank You for Choosing ${APP_NAME}!</p>
-          <p style="color: #64748b; margin-top: 5px;">We hope you enjoyed your experience with us.</p>
+        <!-- TOTALS -->
+        <div class="totals-block">
+          <div class="total-row"><span class="t-lbl">Subtotal:</span><span class="t-val">LKR ${bill.subtotal.toLocaleString()}</span></div>
+          <div class="total-row"><span class="t-lbl">Service Charge (10%):</span><span class="t-val">LKR ${bill.serviceCharge.toLocaleString()}</span></div>
+          ${bill.additionalChargesTotal > 0 ? `<div class="total-row"><span class="t-lbl">Additional Charges:</span><span class="t-val">LKR ${bill.additionalChargesTotal.toLocaleString()}</span></div>` : ''}
+          ${bill.discount > 0 ? `<div class="total-row discount"><span class="t-lbl">Discount${bill.discountType === 'percentage' ? ' (' + bill.discountValue + '%)' : ''}:</span><span class="t-val">- LKR ${bill.discount.toLocaleString()}</span></div>` : ''}
+          <div class="grand-row">
+            <span>TOTAL AMOUNT:</span>
+            <span>LKR ${bill.total.toLocaleString()}</span>
+          </div>
         </div>
+
+        <!-- FOOTER -->
+        <div class="page-footer">
+          <div class="reg-no">REG NO - R/B/03655</div>
+          <div class="thank-you">
+            <strong>Thank You for Choosing Summit Resort!</strong>
+            We hope you enjoyed your experience with us.
+          </div>
+        </div>
+
       </body>
       </html>
     `;
-    
+
     printWindow.document.write(content);
     printWindow.document.close();
-    setTimeout(() => {
-      printWindow.print();
-    }, 250);
+    setTimeout(() => { printWindow.print(); }, 300);
   };
 
+  // ========================
+  // ON-SCREEN PREVIEW
+  // ========================
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
-      <div className="text-center mb-6 pb-6 border-b-2 border-blue-600">
-        
-        {/* ON SCREEN PREVIEW: Keep it centered here or side-by-side? 
-            Keeping centered for mobile responsiveness, but using the Cloudinary logo */}
-        <img 
-          src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png" 
-          alt="Logo" 
-          className="w-24 h-24 mx-auto mb-4 object-contain" 
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+
+      {/* --- LETTERHEAD HEADER (screen preview) --- */}
+      <div className="text-center py-6 px-6 border-b-2 border-double border-gray-800">
+        <img
+          src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png"
+          alt="Logo"
+          className="w-16 h-16 mx-auto mb-2 object-contain"
         />
-
-        <h2 className="text-3xl font-bold text-blue-800">{APP_NAME}</h2>
-        <p className="text-gray-600">Your Comfort is Our Priority</p>
-        <p className="text-sm text-gray-500 mt-1">Tax Invoice</p>
+        <h2 className="text-2xl font-black tracking-widest uppercase text-gray-900">Summit Resort</h2>
+        <p className="text-gray-700 text-sm mt-1">No: 173A, Theresiya Waththa, Ananda Maithreya Mawatha, Balangoda</p>
+        <p className="text-gray-700 text-sm">summitresort@gmail.com</p>
+        <p className="text-gray-700 text-sm font-semibold">0743377071 &nbsp; 0770208493</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Invoice Number</p>
-          <p className="font-semibold text-lg">{bill.billNumber}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Date</p>
-          <p className="font-semibold text-lg">{new Date(bill.billDate).toLocaleString()}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Guest Name</p>
-          <p className="font-semibold text-lg">{bill.guestName}</p>
-        </div>
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">Phone</p>
-          <p className="font-semibold text-lg">{bill.guestPhone}</p>
-        </div>
-      </div>
-
-      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-bold text-lg text-blue-800 mb-2">{bill.details.type}</h3>
-        {bill.billType === 'room' ? (
-          <div className="grid md:grid-cols-2 gap-4 text-sm">
-            <p><strong>Room Number:</strong> {bill.details.roomNumber}</p>
-            <p><strong>Nights:</strong> {bill.details.nights}</p>
-            <p><strong>Check-in:</strong> {new Date(bill.details.checkIn).toLocaleDateString()}</p>
-            <p><strong>Check-out:</strong> {new Date(bill.details.checkOut).toLocaleDateString()}</p>
+      <div className="p-6 md:p-8">
+        {/* Invoice title strip */}
+        <div className="flex justify-between items-center bg-blue-700 text-white px-4 py-2.5 rounded-lg mb-5">
+          <span className="font-bold text-lg tracking-wide">TAX INVOICE</span>
+          <div className="text-right text-xs leading-relaxed">
+            <div>Invoice No: <strong>{bill.billNumber}</strong></div>
+            <div>Date: {new Date(bill.billDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
           </div>
-        ) : (
-          <div className="text-sm">
-            <p><strong>Package:</strong> {bill.details.packageName}</p>
-            <p><strong>Date:</strong> {new Date(bill.details.functionDate).toLocaleDateString()}</p>
-            <p><strong>Number of Guests:</strong> {bill.details.numPeople}</p>
+        </div>
+
+        {/* Info grid */}
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div className="bg-gray-50 border-l-4 border-blue-600 p-3 rounded-r-lg">
+            <p className="text-xs font-bold uppercase text-blue-700 mb-2 tracking-wide">Invoice Details</p>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Invoice No:</span><span>{bill.billNumber}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Date:</span><span>{new Date(bill.billDate).toLocaleDateString('en-GB')}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Type:</span><span>{bill.details.type}</span></div>
+            </div>
           </div>
-        )}
-      </div>
+          <div className="bg-gray-50 border-l-4 border-blue-600 p-3 rounded-r-lg">
+            <p className="text-xs font-bold uppercase text-blue-700 mb-2 tracking-wide">Guest Information</p>
+            <div className="space-y-1 text-sm">
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Name:</span><span>{bill.guestName}</span></div>
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Phone:</span><span>{bill.guestPhone}</span></div>
+              {bill.guestEmail && <div className="flex justify-between"><span className="text-gray-500 font-medium">Email:</span><span>{bill.guestEmail}</span></div>}
+            </div>
+          </div>
+        </div>
 
-      <div className="border rounded-lg overflow-hidden mb-6">
-        <table className="w-full">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="text-left p-3 font-semibold">Description</th>
-              <th className="text-right p-3 font-semibold">Amount (LKR)</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {bill.billType === 'room' ? (
-              <>
-                <tr>
-                  <td className="p-3">Room Charges ({bill.details.nights} nights × LKR {bill.details.roomPrice.toLocaleString()})</td>
-                  <td className="p-3 text-right font-semibold">{bill.details.roomTotal.toLocaleString()}</td>
-                </tr>
-                {bill.details.foodTotal > 0 && (
-                  <tr>
-                    <td className="p-3">
-                      Food Charges ({bill.details.nights} days)
-                      <div className="text-sm text-gray-600 mt-1">
-                        {bill.details.breakfast > 0 && `Breakfast: LKR ${bill.details.breakfast} `}
-                        {bill.details.lunch > 0 && `Lunch: LKR ${bill.details.lunch} `}
-                        {bill.details.dinner > 0 && `Dinner: LKR ${bill.details.dinner}`}
-                      </div>
-                    </td>
-                    <td className="p-3 text-right font-semibold">{bill.details.foodTotal.toLocaleString()}</td>
-                  </tr>
-                )}
-              </>
-            ) : (
-              <tr>
-                <td className="p-3">
-                  {bill.details.packageName}
-                  <div className="text-sm text-gray-600">
-                    {bill.details.numPeople} guests × LKR {bill.details.pricePerPerson.toLocaleString()}
-                  </div>
-                </td>
-                <td className="p-3 text-right font-semibold">{bill.subtotal.toLocaleString()}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {bill.additionalCharges && bill.additionalCharges.length > 0 && (
-        <div className="mb-6">
-          <h3 className="font-bold text-lg text-blue-800 mb-3">Additional Charges</h3>
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="text-left p-3 font-semibold">Item Name</th>
-                  <th className="text-center p-3 font-semibold">Quantity</th>
-                  <th className="text-right p-3 font-semibold">Price (LKR)</th>
-                  <th className="text-right p-3 font-semibold">Total (LKR)</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {bill.additionalCharges.map((charge, index) => (
-                  <tr key={index}>
-                    <td className="p-3">{charge.name}</td>
-                    <td className="p-3 text-center">{charge.quantity}</td>
-                    <td className="p-3 text-right">{charge.price.toLocaleString()}</td>
-                    <td className="p-3 text-right font-semibold">{charge.total.toLocaleString()}</td>
-                  </tr>
+        {/* Booking details */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+          {bill.billType === 'room' ? (
+            <>
+              <h3 className="font-bold text-blue-800 mb-2">Room Booking Details</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <p><span className="font-medium">Room:</span> {bill.details.roomNumber}</p>
+                <p><span className="font-medium">Nights:</span> {bill.details.nights}</p>
+                <p><span className="font-medium">Check-in:</span> {new Date(bill.details.checkIn).toLocaleDateString('en-GB')}</p>
+                <p><span className="font-medium">Check-out:</span> {new Date(bill.details.checkOut).toLocaleDateString('en-GB')}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <h3 className="font-bold text-blue-800 mb-1">{bill.details.packageName}</h3>
+              <p className="text-sm"><span className="font-medium">Date:</span> {new Date(bill.details.functionDate).toLocaleDateString('en-GB')} &nbsp; <span className="font-medium">Guests:</span> {bill.details.numPeople}</p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {bill.details.packageFeatures.map((f, i) => (
+                  <span key={i} className="text-xs bg-white border border-blue-300 text-blue-700 px-2 py-0.5 rounded-full">✓ {f}</span>
                 ))}
-                <tr className="bg-blue-50">
-                  <td colSpan="3" className="p-3 text-right font-bold">Total Additional Charges:</td>
-                  <td className="p-3 text-right font-bold text-blue-600">{bill.additionalChargesTotal.toLocaleString()}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
-      )}
 
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
-        <div className="flex justify-between py-2">
-          <span className="font-medium">Subtotal:</span>
-          <span className="font-semibold">LKR {bill.subtotal.toLocaleString()}</span>
+        {/* Charges table */}
+        <div className="border rounded-lg overflow-hidden mb-4">
+          <table className="w-full text-sm">
+            <thead className="bg-blue-700 text-white">
+              <tr>
+                <th className="text-left p-2.5 font-semibold">Description</th>
+                {bill.billType !== 'room' && <th className="text-center p-2.5 font-semibold">Guests</th>}
+                {bill.billType !== 'room' && <th className="text-right p-2.5 font-semibold">Rate (LKR)</th>}
+                <th className="text-right p-2.5 font-semibold">Amount (LKR)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {bill.billType === 'room' ? (
+                <>
+                  <tr>
+                    <td className="p-2.5">Room Charges ({bill.details.nights} night{bill.details.nights > 1 ? 's' : ''} × LKR {bill.details.roomPrice.toLocaleString()})</td>
+                    <td className="p-2.5 text-right font-semibold">{bill.details.roomTotal.toLocaleString()}</td>
+                  </tr>
+                  {bill.details.foodTotal > 0 && (
+                    <tr className="bg-gray-50">
+                      <td className="p-2.5">
+                        Food Charges ({bill.details.nights} days)
+                        <span className="text-xs text-gray-500 ml-2">
+                          {bill.details.breakfast > 0 && `B: ${bill.details.breakfast} `}
+                          {bill.details.lunch > 0 && `L: ${bill.details.lunch} `}
+                          {bill.details.dinner > 0 && `D: ${bill.details.dinner}`}
+                        </span>
+                      </td>
+                      <td className="p-2.5 text-right font-semibold">{bill.details.foodTotal.toLocaleString()}</td>
+                    </tr>
+                  )}
+                </>
+              ) : (
+                <tr>
+                  <td className="p-2.5">{bill.details.packageName}</td>
+                  <td className="p-2.5 text-center">{bill.details.numPeople}</td>
+                  <td className="p-2.5 text-right">{bill.details.pricePerPerson.toLocaleString()}</td>
+                  <td className="p-2.5 text-right font-semibold">{bill.subtotal.toLocaleString()}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-        <div className="flex justify-between py-2 border-b">
-          <span className="font-medium">Service Charge ({bill.billType === 'room' ? '10%' : '15%'}):</span>
-          <span className="font-semibold">LKR {bill.serviceCharge.toLocaleString()}</span>
-        </div>
-        {bill.additionalChargesTotal > 0 && (
-          <div className="flex justify-between py-2 border-b">
-            <span className="font-medium">Additional Charges:</span>
-            <span className="font-semibold">LKR {bill.additionalChargesTotal.toLocaleString()}</span>
+
+        {/* Additional charges */}
+        {bill.additionalCharges && bill.additionalCharges.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-bold text-blue-800 text-sm mb-2">Additional Charges</h3>
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-blue-700 text-white">
+                  <tr>
+                    <th className="text-left p-2.5">Item</th>
+                    <th className="text-center p-2.5">Qty</th>
+                    <th className="text-right p-2.5">Price</th>
+                    <th className="text-right p-2.5">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {bill.additionalCharges.map((charge, i) => (
+                    <tr key={i}>
+                      <td className="p-2.5">{charge.name}</td>
+                      <td className="p-2.5 text-center">{charge.quantity}</td>
+                      <td className="p-2.5 text-right">{charge.price.toLocaleString()}</td>
+                      <td className="p-2.5 text-right font-semibold">{charge.total.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  <tr className="bg-blue-50">
+                    <td colSpan="3" className="p-2.5 text-right font-bold">Total Additional:</td>
+                    <td className="p-2.5 text-right font-bold text-blue-700">{bill.additionalChargesTotal.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
-        <div className="flex justify-between py-3 mt-2">
-          <span className="text-xl font-bold text-gray-800">GRAND TOTAL:</span>
-          <span className="text-2xl font-bold text-blue-600">LKR {bill.total.toLocaleString()}</span>
-        </div>
-      </div>
 
-      <div className="flex gap-4">
-        <button
-          onClick={generatePDF}
-          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center gap-2"
-        >
-          <Download className="w-5 h-5" />
-          Download/Print Invoice
-        </button>
-        <button
-          onClick={resetForm}
-          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition"
-        >
-          New Bill
-        </button>
+        {/* Special requests */}
+        {bill.specialRequests && (
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg mb-4 text-sm">
+            <strong className="text-amber-800">Special Requests:</strong> <span className="text-amber-700">{bill.specialRequests}</span>
+          </div>
+        )}
+
+        {/* Totals */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-5">
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Subtotal:</span>
+              <span className="font-semibold">LKR {bill.subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Service Charge (10%):</span>
+              <span className="font-semibold">LKR {bill.serviceCharge.toLocaleString()}</span>
+            </div>
+            {bill.additionalChargesTotal > 0 && (
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Additional Charges:</span>
+                <span className="font-semibold">LKR {bill.additionalChargesTotal.toLocaleString()}</span>
+              </div>
+            )}
+            {bill.discount > 0 && (
+              <div className="flex justify-between text-green-700">
+                <span className="font-medium">Discount{bill.discountType === 'percentage' ? ` (${bill.discountValue}%)` : ''}:</span>
+                <span className="font-semibold">- LKR {bill.discount.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-between items-center border-t-2 border-blue-600 mt-3 pt-3">
+            <span className="text-lg font-black text-gray-800">GRAND TOTAL:</span>
+            <span className="text-2xl font-black text-blue-700">LKR {bill.total.toLocaleString()}</span>
+          </div>
+        </div>
+
+        {/* Footer note */}
+        <div className="flex justify-between items-center border-t border-gray-300 pt-3 mb-5 text-sm">
+          <span className="font-bold text-gray-700">REG NO - R/B/03655</span>
+          <span className="text-gray-500 italic">Thank you for choosing Summit Resort!</span>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={generatePDF}
+            className="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center gap-2"
+          >
+            <Download className="w-5 h-5" />
+            Download / Print Invoice
+          </button>
+          <button
+            onClick={resetForm}
+            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition flex items-center justify-center gap-2"
+          >
+            <RotateCcw className="w-5 h-5" />
+            New Bill
+          </button>
+        </div>
       </div>
     </div>
   );
