@@ -240,6 +240,10 @@ const BillPreview = ({ bill, resetForm }) => {
 
           @media print {
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            /* Remove ALL rounded corners — prevents curved black marks at page edges */
+            * { border-radius: 0 !important; }
+            /* Remove browser-added headers/footers URL / date text */
+            html { margin: 0; }
           }
         </style>
       </head>
