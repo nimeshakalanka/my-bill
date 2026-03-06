@@ -1,33 +1,55 @@
 import React, { useState, useCallback } from 'react';
-// FIXED IMPORTS: removed "src/" because we are already inside that folder
 import Login from './components/Login.jsx';
+import HomeScreen from './components/HomeScreen.jsx';
 import BillingDashboard from './components/BillingDashboard.jsx';
+import AppointmentDashboard from './components/AppointmentDashboard.jsx';
 
 // ---------------------------------
 // |   TOP-LEVEL APP COMPONENT     |
 // ---------------------------------
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 'home' | 'billing' | 'appointments'
+  const [activeModule, setActiveModule] = useState('home');
 
-  // This function is called by the Login component on success
   const handleLoginSuccess = useCallback(() => {
     setIsAuthenticated(true);
+    setActiveModule('home');
   }, []);
 
-  // This function is passed to the dashboard to log out
   const handleLogout = useCallback(() => {
     setIsAuthenticated(false);
+    setActiveModule('home');
   }, []);
 
-  // Render Login or Dashboard
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  if (activeModule === 'billing') {
+    return (
+      <BillingDashboard
+        handleLogout={handleLogout}
+        onGoHome={() => setActiveModule('home')}
+      />
+    );
+  }
+
+  if (activeModule === 'appointments') {
+    return (
+      <AppointmentDashboard
+        onGoHome={() => setActiveModule('home')}
+      />
+    );
+  }
+
+  // Default: home screen
   return (
-    <>
-      {!isAuthenticated ? (
-        <Login onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <BillingDashboard handleLogout={handleLogout} />
-      )}
-    </>
+    <HomeScreen
+      onGoToBilling={() => setActiveModule('billing')}
+      onGoToAppointments={() => setActiveModule('appointments')}
+      handleLogout={handleLogout}
+    />
   );
 };
 

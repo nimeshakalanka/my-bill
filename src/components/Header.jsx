@@ -1,8 +1,8 @@
 import React from 'react';
-import { Building2, Receipt, LogOut } from 'lucide-react';
+import { Receipt, LogOut, ArrowLeft } from 'lucide-react';
 import { APP_NAME } from '../constants.js';
 
-const Header = ({ showHistory, setShowHistory, resetForm, handleLogout }) => {
+const Header = ({ showHistory, setShowHistory, resetForm, handleLogout, onGoHome }) => {
   return (
     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-6 md:p-8 mb-6 text-white">
       <div className="flex items-center justify-between flex-wrap gap-4">
@@ -13,11 +13,17 @@ const Header = ({ showHistory, setShowHistory, resetForm, handleLogout }) => {
             <p className="text-blue-100 mt-1">Professional Billing System</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-           <button onClick={() => { setShowHistory(!showHistory); if (!showHistory) resetForm(); }} className="bg-white text-blue-600 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={() => { setShowHistory(!showHistory); if (!showHistory) resetForm(); }} className="bg-white text-blue-600 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-blue-50 transition flex items-center gap-2">
             <Receipt className="w-5 h-5" />
             {showHistory ? 'New Bill' : 'View History'}
           </button>
+          {onGoHome && (
+            <button onClick={onGoHome} className="bg-white/20 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-white/30 transition flex items-center gap-2">
+              <ArrowLeft className="w-5 h-5" />
+              Home
+            </button>
+          )}
           <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold hover:bg-red-600 transition flex items-center gap-2">
             <LogOut className="w-5 h-5" />
             Logout

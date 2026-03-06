@@ -8,7 +8,7 @@ import BillHistory from './BillHistory';
 import BillingForm from './BillingForm';
 import BillPreview from './BillPreview';
 
-const BillingDashboard = ({ handleLogout }) => {
+const BillingDashboard = ({ handleLogout, onGoHome }) => {
   const [billType, setBillType] = useState('room');
   const [formData, setFormData] = useState({
     guestName: '', guestPhone: '', guestEmail: '', roomNumber: '',
@@ -25,7 +25,7 @@ const BillingDashboard = ({ handleLogout }) => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   // --- LOAD BILLS from Netlify Blobs ---
   useEffect(() => {
     const loadBills = async () => {
@@ -46,7 +46,7 @@ const BillingDashboard = ({ handleLogout }) => {
     const newErrors = {};
     if (!formData.guestName.trim()) newErrors.guestName = 'Guest name is required';
     if (!formData.guestPhone.trim()) newErrors.guestPhone = 'Phone number is required';
-    
+
     if (billType === 'room') {
       if (!formData.roomNumber.trim()) newErrors.roomNumber = 'Room number is required';
       if (!formData.checkIn) newErrors.checkIn = 'Check-in date is required';
@@ -112,13 +112,13 @@ const BillingDashboard = ({ handleLogout }) => {
     const serviceCharge = subtotal * serviceChargeRate;
     const total = subtotal + serviceCharge + additionalChargesTotal - discount;
     const newBill = { billType, ...formData, details, subtotal, serviceCharge, total, billNumber, billDate, additionalCharges: additionalChargesDetails, additionalChargesTotal, discount, discountType: formData.discountType, discountValue: formData.discountValue };
-    
+
     try {
       const updatedHistory = [newBill, ...billHistory];
       console.log('Attempting to save bill...', newBill);
-      
+
       await billService.saveBills(updatedHistory);
-      
+
       setBillHistory(updatedHistory);
       setBill(newBill);
       console.log('Bill saved and state updated successfully');
@@ -139,20 +139,20 @@ const BillingDashboard = ({ handleLogout }) => {
     try {
       console.log('Deleting bill:', billNum);
       console.log('Current bill history count:', billHistory.length);
-      
+
       const result = await billService.deleteBill(billNum);
       console.log('Delete result:', result);
       console.log('Returned bills count:', result?.bills?.length);
-      
+
       if (result && result.bills) {
         console.log('Setting new bill history...');
         setBillHistory(result.bills);
-        
+
         // Verify the state will update
         setTimeout(() => {
           console.log('Bill history after delete:', billHistory.length);
         }, 100);
-        
+
         alert("Bill deleted successfully!");
       } else {
         throw new Error('Invalid response from server');
@@ -165,7 +165,7 @@ const BillingDashboard = ({ handleLogout }) => {
   };
 
   const viewBill = (savedBill) => { setBill(savedBill); setShowHistory(false); };
-  
+
   const resetForm = () => {
     setBill(null); setErrors({});
     setFormData({ guestName: '', guestPhone: '', guestEmail: '', roomNumber: '', checkIn: '', checkOut: '', roomPrice: 5000, breakfast: 0, lunch: 0, dinner: 0, packageType: 'silver', numPeople: 50, functionDate: '', specialRequests: '', additionalCharges: [] });
@@ -176,7 +176,7 @@ const BillingDashboard = ({ handleLogout }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <Header showHistory={showHistory} setShowHistory={setShowHistory} resetForm={resetForm} handleLogout={handleLogout} />
+        <Header showHistory={showHistory} setShowHistory={setShowHistory} resetForm={resetForm} handleLogout={handleLogout} onGoHome={onGoHome} />
         {showHistory ? (
           <BillHistory billHistory={billHistory} searchTerm={searchTerm} setSearchTerm={setSearchTerm} viewBill={viewBill} deleteBill={deleteBill} isProcessing={isProcessing} />
         ) : !bill ? (
