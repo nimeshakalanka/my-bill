@@ -32,8 +32,10 @@ const BillingDashboard = ({ handleLogout, onGoHome }) => {
       setIsLoading(true);
       try {
         const bills = await billService.fetchBills();
-        bills.sort((a, b) => new Date(b.billDate) - new Date(a.billDate));
-        setBillHistory(bills);
+        const filtered = bills
+          .filter(b => b.billType !== 'restaurant')
+          .sort((a, b) => new Date(b.billDate) - new Date(a.billDate));
+        setBillHistory(filtered);
       } catch (error) {
         console.error("Error loading bills:", error);
       }
