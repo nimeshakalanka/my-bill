@@ -95,7 +95,6 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
             <div class="info-row"><span class="lbl">Invoice No:</span><span class="val">${bill.billNumber}</span></div>
             <div class="info-row"><span class="lbl">Date:</span><span class="val">${new Date(bill.billDate).toLocaleDateString('en-GB')}</span></div>
             <div class="info-row"><span class="lbl">Type:</span><span class="val">Restaurant Order</span></div>
-            ${bill.tableNumber ? `<div class="info-row"><span class="lbl">Table:</span><span class="val">${bill.tableNumber}</span></div>` : ''}
           </div>
           <div class="info-box">
             <div class="box-title">Customer Information</div>
@@ -191,7 +190,6 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
               <div className="flex justify-between"><span className="text-gray-500 font-medium">Invoice No:</span><span>{bill.billNumber}</span></div>
               <div className="flex justify-between"><span className="text-gray-500 font-medium">Date:</span><span>{new Date(bill.billDate).toLocaleDateString('en-GB')}</span></div>
               <div className="flex justify-between"><span className="text-gray-500 font-medium">Type:</span><span>Restaurant Order</span></div>
-              {bill.tableNumber && <div className="flex justify-between"><span className="text-gray-500 font-medium">Table:</span><span>{bill.tableNumber}</span></div>}
             </div>
           </div>
           <div className="bg-green-50 border-l-4 border-green-600 p-3 rounded-r-lg">

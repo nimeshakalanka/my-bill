@@ -10,7 +10,7 @@ import RestaurantBillPreview from './RestaurantBillPreview';
 
 const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
   const [formData, setFormData] = useState({
-    customerName: '', customerPhone: '', tableNumber: '',
+    customerName: '', customerPhone: '',
     specialRequests: '', discountType: 'none', discountValue: 0
   });
   const [orderItems, setOrderItems] = useState([]);
@@ -77,7 +77,6 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
       billDate,
       customerName: formData.customerName,
       customerPhone: formData.customerPhone,
-      tableNumber: formData.tableNumber,
       specialRequests: formData.specialRequests,
       orderItems,
       subtotal,
@@ -130,7 +129,7 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
     setBill(null);
     setErrors({});
     setOrderItems([]);
-    setFormData({ customerName: '', customerPhone: '', tableNumber: '', specialRequests: '', discountType: 'none', discountValue: 0 });
+    setFormData({ customerName: '', customerPhone: '', specialRequests: '', discountType: 'none', discountValue: 0 });
   };
 
   if (isLoading) return (
@@ -149,6 +148,7 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
           resetForm={resetForm}
           handleLogout={handleLogout}
           onGoHome={onGoHome}
+          theme="green"
         />
         {showHistory ? (
           <BillHistory

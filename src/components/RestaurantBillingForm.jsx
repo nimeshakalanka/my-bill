@@ -56,7 +56,7 @@ const RestaurantBillingForm = ({
           <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
           Customer Information
         </h3>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
             <input
@@ -77,15 +77,7 @@ const RestaurantBillingForm = ({
             />
             {errors.customerPhone && <p className="text-red-500 text-xs mt-1">{errors.customerPhone}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Table Number</label>
-            <input
-              type="text" name="tableNumber" value={formData.tableNumber}
-              onChange={handleFormChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="e.g. T-05 (optional)"
-            />
-          </div>
+
         </div>
       </div>
 
