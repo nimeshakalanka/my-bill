@@ -11,7 +11,8 @@ import RestaurantBillPreview from './RestaurantBillPreview';
 const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
   const [formData, setFormData] = useState({
     customerName: '', customerPhone: '',
-    specialRequests: '', discountType: 'none', discountValue: 0
+    specialRequests: '', discountType: 'none', discountValue: 0,
+    additionalCharges: []
   });
   const [orderItems, setOrderItems] = useState([]);
 
@@ -60,14 +61,27 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
     const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.qty, 0);
     const serviceCharge = subtotal * restaurantServiceChargeRate;
 
+    // Calculate additional charges
+    let additionalChargesTotal = 0;
+    const additionalChargesDetails = [];
+    if (formData.additionalCharges && formData.additionalCharges.length > 0) {
+      formData.additionalCharges.forEach(charge => {
+        if (charge.name && charge.quantity > 0 && charge.price > 0) {
+          const itemTotal = charge.quantity * charge.price;
+          additionalChargesTotal += itemTotal;
+          additionalChargesDetails.push({ ...charge, total: itemTotal });
+        }
+      });
+    }
+
     let discount = 0;
     if (formData.discountType === 'percentage') {
-      discount = subtotal * (formData.discountValue / 100);
+      discount = (subtotal + additionalChargesTotal) * (formData.discountValue / 100);
     } else if (formData.discountType === 'fixed') {
       discount = formData.discountValue;
     }
 
-    const total = subtotal + serviceCharge - discount;
+    const total = subtotal + serviceCharge + additionalChargesTotal - discount;
     const billNumber = `RES-${Date.now()}`;
     const billDate = new Date().toISOString();
 
@@ -79,6 +93,8 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
       customerPhone: formData.customerPhone,
       specialRequests: formData.specialRequests,
       orderItems,
+      additionalCharges: additionalChargesDetails,
+      additionalChargesTotal,
       subtotal,
       serviceCharge,
       discount,
@@ -129,7 +145,7 @@ const RestaurantDashboard = ({ handleLogout, onGoHome }) => {
     setBill(null);
     setErrors({});
     setOrderItems([]);
-    setFormData({ customerName: '', customerPhone: '', specialRequests: '', discountType: 'none', discountValue: 0 });
+    setFormData({ customerName: '', customerPhone: '', specialRequests: '', discountType: 'none', discountValue: 0, additionalCharges: [] });
   };
 
   if (isLoading) return (

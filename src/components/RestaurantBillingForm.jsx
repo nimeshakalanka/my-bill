@@ -38,6 +38,21 @@ const RestaurantBillingForm = ({
 
   const removeItem = (itemId) => setOrderItems(prev => prev.filter(i => i.id !== itemId));
 
+  // ── additional charges helpers ────────────────────────────────────────────
+  const handleAdditionalChargeChange = (index, field, value) => {
+    const updated = [...(formData.additionalCharges || [])];
+    updated[index] = { ...updated[index], [field]: field === 'name' ? value : (parseFloat(value) || 0) };
+    setFormData(prev => ({ ...prev, additionalCharges: updated }));
+  };
+
+  const addAdditionalCharge = () => {
+    setFormData(prev => ({ ...prev, additionalCharges: [...(prev.additionalCharges || []), { name: '', quantity: 0, price: 0 }] }));
+  };
+
+  const removeAdditionalCharge = (index) => {
+    setFormData(prev => ({ ...prev, additionalCharges: (prev.additionalCharges || []).filter((_, i) => i !== index) }));
+  };
+
   // filtered items for search
   const filteredItems = searchTerm.trim()
     ? Object.values(restaurantMenu).flat().filter(item =>
@@ -173,7 +188,7 @@ const RestaurantBillingForm = ({
         <div className="mb-6">
           <h3 className="text-base font-semibold text-gray-700 mb-3 flex items-center gap-2">
             <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
-            Order Summary
+            Order Summary (Menu Items)
           </h3>
           <div className="border border-gray-200 rounded-lg overflow-hidden">
             <table className="w-full text-sm">
@@ -222,6 +237,70 @@ const RestaurantBillingForm = ({
           </div>
         </div>
       )}
+
+      {/* ── Additional Charges ────────────────────────────── */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <span className="w-6 h-6 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold">4</span>
+            Additional Charges
+          </label>
+          <button
+            type="button"
+            onClick={addAdditionalCharge}
+            className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm"
+          >
+            <Plus className="w-4 h-4" /> Add Item
+          </button>
+        </div>
+        {formData.additionalCharges && formData.additionalCharges.length > 0 && (
+          <div className="space-y-3">
+            {formData.additionalCharges.map((charge, index) => (
+              <div key={index} className="grid grid-cols-12 gap-3 items-end">
+                <div className="col-span-5">
+                  <label className="block text-xs text-gray-600 mb-1">Item Name</label>
+                  <input
+                    type="text"
+                    value={charge.name}
+                    onChange={e => handleAdditionalChargeChange(index, 'name', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    placeholder="e.g. Corkage, Service"
+                  />
+                </div>
+                <div className="col-span-3">
+                  <label className="block text-xs text-gray-600 mb-1">Quantity</label>
+                  <input
+                    type="number" min="0"
+                    value={charge.quantity}
+                    onChange={e => handleAdditionalChargeChange(index, 'quantity', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    placeholder="0"
+                  />
+                </div>
+                <div className="col-span-3">
+                  <label className="block text-xs text-gray-600 mb-1">Price (LKR)</label>
+                  <input
+                    type="number" min="0"
+                    value={charge.price}
+                    onChange={e => handleAdditionalChargeChange(index, 'price', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    placeholder="0"
+                  />
+                </div>
+                <div className="col-span-1">
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalCharge(index)}
+                    className="w-full p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                  >
+                    <Trash2 className="w-4 h-4 mx-auto" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* ── Special Requests ──────────────────────────────── */}
       <div className="mb-6">

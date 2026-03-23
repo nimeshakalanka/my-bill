@@ -122,6 +122,31 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
           </tbody>
         </table>
 
+        <!-- ADDITIONAL CHARGES (PDF) -->
+        ${bill.additionalCharges && bill.additionalCharges.length > 0 ? `
+        <div style="font-size:11px;font-weight:bold;color:#166534;margin:8px 0 4px 0;">Additional Charges</div>
+        <table>
+          <thead><tr>
+            <th>Item</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:right;">Price (LKR)</th>
+            <th style="text-align:right;">Total (LKR)</th>
+          </tr></thead>
+          <tbody>
+            ${bill.additionalCharges.map(c => `
+            <tr>
+              <td>${c.name}</td>
+              <td style="text-align:center;">${c.quantity}</td>
+              <td style="text-align:right;">${c.price.toLocaleString()}</td>
+              <td style="text-align:right;font-weight:700;">${c.total.toLocaleString()}</td>
+            </tr>`).join('')}
+            <tr style="background:#dcfce7;font-weight:700;">
+              <td colspan="3" style="text-align:right;">Total Additional:</td>
+              <td style="text-align:right;">${bill.additionalChargesTotal.toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>` : ''}
+
         <!-- SPECIAL REQUESTS -->
         ${bill.specialRequests ? `
         <div class="special-box">
@@ -132,6 +157,7 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
         <div class="totals-block">
           <div class="total-row"><span class="t-lbl">Subtotal:</span><span class="t-val">LKR ${bill.subtotal.toLocaleString()}</span></div>
           <div class="total-row"><span class="t-lbl">Service Charge (10%):</span><span class="t-val">LKR ${bill.serviceCharge.toLocaleString()}</span></div>
+          ${bill.additionalChargesTotal > 0 ? `<div class="total-row"><span class="t-lbl">Additional Charges:</span><span class="t-val">LKR ${bill.additionalChargesTotal.toLocaleString()}</span></div>` : ''}
           ${bill.discount > 0 ? `<div class="total-row discount"><span class="t-lbl">Discount${bill.discountType === 'percentage' ? ' (' + bill.discountValue + '%)' : ''}:</span><span class="t-val">- LKR ${bill.discount.toLocaleString()}</span></div>` : ''}
           <div class="grand-row">
             <span>TOTAL AMOUNT:</span>
@@ -225,6 +251,39 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
           </table>
         </div>
 
+        {/* Additional charges (screen) */}
+        {bill.additionalCharges && bill.additionalCharges.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-bold text-green-800 text-sm mb-2">Additional Charges</h3>
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-green-700 text-white">
+                  <tr>
+                    <th className="text-left p-2.5">Item</th>
+                    <th className="text-center p-2.5">Qty</th>
+                    <th className="text-right p-2.5">Price</th>
+                    <th className="text-right p-2.5">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {bill.additionalCharges.map((charge, i) => (
+                    <tr key={i}>
+                      <td className="p-2.5">{charge.name}</td>
+                      <td className="p-2.5 text-center">{charge.quantity}</td>
+                      <td className="p-2.5 text-right">{charge.price.toLocaleString()}</td>
+                      <td className="p-2.5 text-right font-semibold">{charge.total.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                  <tr className="bg-green-50">
+                    <td colSpan="3" className="p-2.5 text-right font-bold">Total Additional:</td>
+                    <td className="p-2.5 text-right font-bold text-green-700">{bill.additionalChargesTotal.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* Special requests */}
         {bill.specialRequests && (
           <div className="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg mb-4 text-sm">
@@ -244,6 +303,12 @@ const RestaurantBillPreview = ({ bill, resetForm }) => {
               <span className="font-medium text-gray-600">Service Charge (10%):</span>
               <span className="font-semibold">LKR {bill.serviceCharge.toLocaleString()}</span>
             </div>
+            {bill.additionalChargesTotal > 0 && (
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600">Additional Charges:</span>
+                <span className="font-semibold">LKR {bill.additionalChargesTotal.toLocaleString()}</span>
+              </div>
+            )}
             {bill.discount > 0 && (
               <div className="flex justify-between text-green-700">
                 <span className="font-medium">Discount{bill.discountType === 'percentage' ? ` (${bill.discountValue}%)` : ''}:</span>
