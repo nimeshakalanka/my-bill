@@ -1,8 +1,8 @@
 import React from 'react';
-import { CalendarDays, Receipt, LogOut } from 'lucide-react';
+import { CalendarDays, Receipt, LogOut, UtensilsCrossed } from 'lucide-react';
 import { APP_NAME } from '../constants.js';
 
-const HomeScreen = ({ onGoToBilling, onGoToAppointments, handleLogout }) => {
+const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handleLogout }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-violet-950 flex flex-col items-center justify-center p-6">
             {/* Top logo / title */}
@@ -16,8 +16,8 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, handleLogout }) => {
                 <p className="text-indigo-300 mt-2 text-lg font-medium">Management Portal</p>
             </div>
 
-            {/* Two big cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl">
+            {/* Three big cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
 
                 {/* Appointments Card */}
                 <button
@@ -25,7 +25,6 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, handleLogout }) => {
                     className="group relative overflow-hidden rounded-3xl p-8 text-left shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-violet-500/40 focus:outline-none bg-gradient-to-br from-violet-600 to-purple-700"
                 >
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
-                    {/* Decorative circle */}
                     <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-purple-400/20 blur-xl" />
 
@@ -65,6 +64,29 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, handleLogout }) => {
                         </div>
                     </div>
                 </button>
+
+                {/* Restaurant Card */}
+                <button
+                    onClick={onGoToRestaurant}
+                    className="group relative overflow-hidden rounded-3xl p-8 text-left shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-green-500/40 focus:outline-none bg-gradient-to-br from-green-600 to-emerald-700"
+                >
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+                    <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-green-400/20 blur-xl" />
+
+                    <div className="relative z-10">
+                        <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 shadow-lg">
+                            <UtensilsCrossed className="w-9 h-9 text-white" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Restaurant</h2>
+                        <p className="text-green-200 text-sm leading-relaxed">
+                            Generate food &amp; beverage bills from the full Summit Resort menu for dine-in customers.
+                        </p>
+                        <div className="mt-6 inline-flex items-center gap-2 text-white font-semibold text-sm bg-white/20 px-4 py-2 rounded-full">
+                            <UtensilsCrossed className="w-4 h-4" /> Open Restaurant
+                        </div>
+                    </div>
+                </button>
             </div>
 
             {/* Logout */}
@@ -80,3 +102,4 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, handleLogout }) => {
 };
 
 export default HomeScreen;
+
