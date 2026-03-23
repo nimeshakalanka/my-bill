@@ -1,12 +1,12 @@
 import React from 'react';
-import { CalendarDays, Receipt, LogOut, UtensilsCrossed } from 'lucide-react';
+import { CalendarDays, Receipt, LogOut, UtensilsCrossed, BarChart3 } from 'lucide-react';
 import { APP_NAME } from '../constants.js';
 
-const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handleLogout }) => {
+const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, onGoToSummary, handleLogout }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-violet-950 flex flex-col items-center justify-center p-6">
             {/* Top logo / title */}
-            <div className="flex flex-col items-center mb-12">
+            <div className="flex flex-col items-center mb-10">
                 <img
                     src="https://res.cloudinary.com/dluwvqdaz/image/upload/v1763126831/logo_fatuqr.png"
                     alt="Logo"
@@ -16,8 +16,8 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
                 <p className="text-indigo-300 mt-2 text-lg font-medium">Management Portal</p>
             </div>
 
-            {/* Three big cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+            {/* 2×2 card grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
 
                 {/* Appointments Card */}
                 <button
@@ -27,14 +27,13 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
                     <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-purple-400/20 blur-xl" />
-
                     <div className="relative z-10">
                         <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 shadow-lg">
                             <CalendarDays className="w-9 h-9 text-white" />
                         </div>
                         <h2 className="text-2xl font-bold text-white mb-2">Appointments</h2>
                         <p className="text-purple-200 text-sm leading-relaxed">
-                            Schedule &amp; manage wedding, photoshoot, party and other function bookings with a calendar view.
+                            Schedule &amp; manage wedding, photoshoot, party and other function bookings.
                         </p>
                         <div className="mt-6 inline-flex items-center gap-2 text-white font-semibold text-sm bg-white/20 px-4 py-2 rounded-full">
                             <CalendarDays className="w-4 h-4" /> Open Appointments
@@ -50,7 +49,6 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
                     <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-blue-400/20 blur-xl" />
-
                     <div className="relative z-10">
                         <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 shadow-lg">
                             <Receipt className="w-9 h-9 text-white" />
@@ -73,7 +71,6 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
                     <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-green-400/20 blur-xl" />
-
                     <div className="relative z-10">
                         <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 shadow-lg">
                             <UtensilsCrossed className="w-9 h-9 text-white" />
@@ -87,12 +84,34 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
                         </div>
                     </div>
                 </button>
+
+                {/* Summary Card */}
+                <button
+                    onClick={onGoToSummary}
+                    className="group relative overflow-hidden rounded-3xl p-8 text-left shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-amber-500/40 focus:outline-none bg-gradient-to-br from-amber-500 to-orange-600"
+                >
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+                    <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-amber-400/20 blur-xl" />
+                    <div className="relative z-10">
+                        <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-6 shadow-lg">
+                            <BarChart3 className="w-9 h-9 text-white" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-white mb-2">Summary</h2>
+                        <p className="text-amber-100 text-sm leading-relaxed">
+                            View daily &amp; date-range revenue reports across all billing categories with filters.
+                        </p>
+                        <div className="mt-6 inline-flex items-center gap-2 text-white font-semibold text-sm bg-white/20 px-4 py-2 rounded-full">
+                            <BarChart3 className="w-4 h-4" /> View Summary
+                        </div>
+                    </div>
+                </button>
             </div>
 
             {/* Logout */}
             <button
                 onClick={handleLogout}
-                className="mt-12 flex items-center gap-2 text-indigo-300 hover:text-white transition-colors duration-200 text-sm font-medium"
+                className="mt-10 flex items-center gap-2 text-indigo-300 hover:text-white transition-colors duration-200 text-sm font-medium"
             >
                 <LogOut className="w-4 h-4" />
                 Sign Out
@@ -102,4 +121,3 @@ const HomeScreen = ({ onGoToBilling, onGoToAppointments, onGoToRestaurant, handl
 };
 
 export default HomeScreen;
-

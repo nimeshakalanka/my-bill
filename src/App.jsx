@@ -4,13 +4,14 @@ import HomeScreen from './components/HomeScreen.jsx';
 import BillingDashboard from './components/BillingDashboard.jsx';
 import AppointmentDashboard from './components/AppointmentDashboard.jsx';
 import RestaurantDashboard from './components/RestaurantDashboard.jsx';
+import SummaryDashboard from './components/SummaryDashboard.jsx';
 
 // ---------------------------------
 // |   TOP-LEVEL APP COMPONENT     |
 // ---------------------------------
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // 'home' | 'billing' | 'appointments' | 'restaurant'
+  // 'home' | 'billing' | 'appointments' | 'restaurant' | 'summary'
   const [activeModule, setActiveModule] = useState('home');
 
   const handleLoginSuccess = useCallback(() => {
@@ -53,12 +54,22 @@ const App = () => {
     );
   }
 
+  if (activeModule === 'summary') {
+    return (
+      <SummaryDashboard
+        handleLogout={handleLogout}
+        onGoHome={() => setActiveModule('home')}
+      />
+    );
+  }
+
   // Default: home screen
   return (
     <HomeScreen
       onGoToBilling={() => setActiveModule('billing')}
       onGoToAppointments={() => setActiveModule('appointments')}
       onGoToRestaurant={() => setActiveModule('restaurant')}
+      onGoToSummary={() => setActiveModule('summary')}
       handleLogout={handleLogout}
     />
   );
