@@ -28,11 +28,3 @@ This project is ideal for small businesses, shops, and personal use where fast b
 - **Hosting:** Netlify  
 <!-- Add React / Tailwind / Firebase here if used -->
 
----
-
-## 📸 Screenshots
-*(Add screenshots here)*
-
-```md
-![Screenshot 1](./screenshots/screen1.png)
-![Screenshot 2](./screenshots/screen2.png)
