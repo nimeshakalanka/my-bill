@@ -28,3 +28,5 @@ This project is ideal for small businesses, shops, and personal use where fast b
 - **Hosting:** Netlify  
 <!-- Add React / Tailwind / Firebase here if used -->
 
+...
+add new features for resturant billing
